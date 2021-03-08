@@ -38,6 +38,12 @@ import CheckIcon from '@material-ui/icons/Check';
 import Chip from '@material-ui/core/Chip';
 import DoneIcon from '@material-ui/icons/Done';
 import DataGrid from '@material-ui/data-grid';
+import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const theme = createMuiTheme({
   palette: {
@@ -366,6 +372,30 @@ function History({rows}) {
   )
 }
 
+function MobileDialog() {
+  const [open, setOpen] = React.useState(true);
+  const handleClose = (value) => {
+    setOpen(false);
+  };
+
+  return(
+    <Dialog
+      open={open}
+    >
+      <DialogTitle id="alert-dialog-title">{"Not supported"}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          This app is currently not supported on mobile, and as a result, you may experience bugs and glitches.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -420,17 +450,21 @@ class App extends Component {
   }
   
   showGame(e) {
-    this.setState({
-      showGame: true,
-      showInstr: false,
-    });
+    if(!this.state.showGame) {
+      this.setState({
+        showGame: true,
+        showInstr: false,
+      });
+    }
   }
 
   showInstruction(e) {
-    this.setState({
-      showGame: false,
-      showInstr: true,
-    });
+    if(!this.state.showInstr) {
+      this.setState({
+        showGame: false,
+        showInstr: true,
+      });
+    }
   }
 
   startLoading(e) {
@@ -458,6 +492,10 @@ class App extends Component {
       <div className={classes.root}>
         <ThemeProvider theme={theme}>
           <CssBaseline /> 
+          {/* Mobile */}
+          <MobileView>
+            <MobileDialog/>
+          </MobileView>
           {/* Introduction */}
           <Introduction showInstruction={this.showInstruction} showGame={this.showGame}/>
           {/* What To Show */}

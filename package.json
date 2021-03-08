@@ -13,6 +13,7 @@
     "material-ui-colors": "^1.0.0",
     "react": "^17.0.1",
     "react-animations": "^1.0.0",
+    "react-device-detect": "^1.15.0",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.3",
     "recharts": "^2.0.8",
