@@ -25,7 +25,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 import { spacing } from "@material-ui/system";
 import Fade from '@material-ui/core/Fade';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import green from "@material-ui/core/colors/green";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import Table from '@material-ui/core/Table';
@@ -44,6 +44,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import SendIcon from '@material-ui/icons/Send';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import Switch from '@material-ui/core/Switch';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import Tooltip from '@material-ui/core/Tooltip';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const theme = createMuiTheme({
   palette: {
@@ -59,21 +70,23 @@ const statTheme = createMuiTheme({
   },
 });
 
-const emojis = [
-  '👩🏽‍💼',
-  '🧜🏽',
-  '👨🏼‍🏫',
-  '🙇🏻‍♀️',
-  '🥺',
-  '👽',
-  '👀',
-  '💩',
-  '🍆',
-]
+// 🍎 = Pikachu
+// 🍌 = Lotad
+// 🔁 = Replay
+// 7️⃣ = Red 7
+// 🍊 = Refund (Blue 7)
+// 🍒 = Cherry
+// 🍇 = Marill
+const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
+const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
+const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
 
 const useStyles = makeStyles((theme) => ({
   root: {
     textAlign: 'center',
+  },
+  github_btn: {
+    marginTop: theme.spacing(2),
   },
   game_container: {
     backgroundColor: theme.palette.grey[900],
@@ -106,10 +119,28 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   game_paper: {
+    position: "relative",
     backgroundColor: theme.palette.grey[900],
     paddingTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
     textAlign: 'center',
+  },
+  rowIndicSide: {
+    position: 'absolute',
+    left: theme.spacing(-2),
+    bottom: theme.spacing(7),
+  },
+  rowIndicDiagTop: {
+    position: 'absolute',
+    left: theme.spacing(-2),
+    bottom: theme.spacing(7),
+    top: theme.spacing(-2),
+  },
+  rowIndicDiagBot: {
+    position: 'absolute',
+    left: theme.spacing(-2),
+    bottom: theme.spacing(7),
+    top: theme.spacing(17),
   },
   stat_paper: {
     height: 300,
@@ -132,7 +163,7 @@ function Introduction({showInstruction, showGame}) {
     <Box mt={10}>
       <Container maxWidth="md">
         <Typography variant="h2" align="center" color="textPrimary" gutterBottom>
-          Crytocurrency Slot Machine
+          Cryptocurrency Slot Machine
         </Typography>
         <Box py={2}>
           <Typography variant="h6" align="center" color="textSecondary" paragraph>
@@ -143,15 +174,19 @@ function Introduction({showInstruction, showGame}) {
         <div>
           <Grid container spacing={2} justify="center">
             <Grid item>
-              <Button onClick={(e) => showInstruction(e)} variant="contained" color="primary">
-                How To Play
-              </Button>
+              <Tooltip title="Step-by-step instructions">
+                <Button onClick={(e) => showInstruction(e)} variant="contained" color="primary">
+                  How To Play
+                </Button>
+              </Tooltip>
             </Grid>
-            <Grid item>
-              <Button onClick={(e) => showGame(e)} variant="contained" color="secondary">
-                Play Game
-              </Button>
-            </Grid>
+              <Grid item>
+                <Tooltip title="Load game interface">
+                  <Button onClick={(e) => showGame(e)} variant="contained" color="secondary">
+                    Play Game
+                  </Button>
+                </Tooltip>
+              </Grid>
           </Grid>
         </div>
       </Container>
@@ -181,8 +216,28 @@ function Instruction({showInstr}) {
   )
 }
 
-function Game({showGame, startLoading, loading}) {
+function Game({showGame, setLoading, loading, colIdx}) {
   const classes = useStyles();
+  const col1Idx = colIdx[0];
+  const col2Idx = colIdx[1];
+  const col3Idx = colIdx[2];
+  // I want to show them like it's a real reel in a casino, not just all random
+  const emojiDisplay = [
+    col1[col1Idx % col1.length],
+    col2[col2Idx % col2.length],
+    col3[col3Idx % col3.length],
+    col1[(col1Idx+1) % col1.length],
+    col2[(col2Idx+1) % col2.length],
+    col3[(col3Idx+1) % col3.length],
+    col1[(col1Idx+2) % col1.length],
+    col2[(col2Idx+2) % col2.length],
+    col3[(col3Idx+2) % col3.length],
+  ]
+  console.log(col1Idx)
+  console.log(col2Idx)
+  console.log(col3Idx)
+  console.log(emojiDisplay)
+
   if(!showGame) {
     return <span></span>
   }
@@ -191,12 +246,33 @@ function Game({showGame, startLoading, loading}) {
       <Box mt={10}>
         <Container maxWidth="sm">
             <Grid container justify="center" spacing={4}>
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((value) => (
-                  <Grid item key={value} xs={4} md={4} lg={4}>
+              {emojiDisplay.map((value, idx) => (
+                  <Grid item key={idx} xs={4} md={4} lg={4}>
                     <Box boxShadow={3}>
                       <Paper className={classes.game_paper}>
+                        {/* 1, 2, 3 indicators spawn */}
+                        {idx === 0 &&
+                          <span>
+                            <Chip className={classes.rowIndicSide} label="2" color="primary"/>
+                            <ThemeProvider theme={statTheme}>
+                              <Chip className={classes.rowIndicDiagTop} label="3" color="secondary"/>
+                            </ThemeProvider>
+                          </span>
+                        }
+                        {idx === 3 &&
+                          <Chip className={classes.rowIndicSide} label="1" color="secondary"/>
+                        }
+                        {idx === 6 &&
+                          <span>
+                            <Chip className={classes.rowIndicSide} label="2" color="primary"/>
+                            <ThemeProvider theme={statTheme}>
+                              <Chip className={classes.rowIndicDiagBot} label="3" color="secondary"/>
+                            </ThemeProvider>
+                          </span>
+                        }
+                        {/* Emoji spawn */}
                           <Typography component="h1" variant="h2">
-                            {emojis[getRandomInt(emojis.length)]}
+                            {value}
                           </Typography>
                       </Paper>
                     </Box>
@@ -207,7 +283,7 @@ function Game({showGame, startLoading, loading}) {
           <Box mt={3} mr={3}>
             <Grid container justify="center" spacing={2}>
               <Grid item>
-                <Button disabled={loading} variant="contained" color="primary" onClick={startLoading} >
+                <Button disabled={loading} variant="contained" color="primary" onClick={setLoading} endIcon={<SendIcon/>} >
                   Start 
                 </Button>
               </Grid>
@@ -247,17 +323,17 @@ function Stats({showGame, data}) {
             <Box>
                 <Grid container justify="center" spacing={4}>
                   <Grid item xs={12} sm={8}>
-                    <Paper className={classes.stat_paper}>
+                    <Paper className={classes.stat_paper} elevation={3}>
                       <Chart data={data.chartData}/>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                    <Paper className={classes.stat_paper}>
+                    <Paper className={classes.stat_paper} elevation={3}>
                       <Balance />
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={12}>
-                    <Paper className={classes.stat_history}>
+                    <Paper className={classes.stat_history} elevation={3}>
                       <History rows={data.historyData}/>
                     </Paper>
                   </Grid>
@@ -396,6 +472,7 @@ function MobileDialog() {
     </Dialog>
   )
 }
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -407,6 +484,7 @@ function createChartData(time, amount) {
 function createHistoryData(id, date, outcome, status, fee, profit) {
   return { id, date, outcome, status, fee, profit };
 }
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -414,10 +492,13 @@ class App extends Component {
       showGame: false,
       showInstr: false,
       loading: false,
+      col1Idx: getRandomInt(col1.length),
+      col2Idx: getRandomInt(col2.length),
+      col3Idx: getRandomInt(col3.length),
     };
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
-    this.startLoading = this.startLoading.bind(this);
+    this.setLoading = this.setLoading.bind(this);
     this.data = {
       chartData: [
         createChartData('00:00', 0),
@@ -431,8 +512,8 @@ class App extends Component {
         createChartData('24:00', undefined),
       ],
       historyData: [
-        createHistoryData(0, '00:00, 16 Mar, 2019', '👋🏾👋🏾👋🏾', 'Win', 5, -999.3),
-        createHistoryData(1, '03:00, 16 Mar, 2019', '🤚🏾🤚🏾🤚🏾', 'Win', 11, 100),
+        createHistoryData(0, '00:00, 16 Mar, 2019', '👋🏾👋🏾👋🏾', 'Win', 5, 7),
+        createHistoryData(1, '03:00, 16 Mar, 2019', '🤚🏾🤚🏾🤚🏾', 'Win', 11, 22),
         createHistoryData(2, '06:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 500),
         createHistoryData(3, '07:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 654.39),
         createHistoryData(4, '07:15, 15 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 212.79),
@@ -445,6 +526,7 @@ class App extends Component {
         createHistoryData(11, '13:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 866.99),
         createHistoryData(12, '14:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 100.81),
         createHistoryData(13, '15:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 654.39),
+        
       ],
     } 
   }
@@ -467,15 +549,28 @@ class App extends Component {
     }
   }
 
-  startLoading(e) {
-    this.setState({
-      loading: true,
-    });
-    this.interval = setInterval(() => this.tick(), 150);
+  setLoading(e) {
+    if(!this.state.loading) {
+      this.setState({
+        loading: true,
+      });
+      this.col1Idx = getRandomInt(col1.length);
+      this.col2Idx = getRandomInt(col2.length);
+      this.col3Idx = getRandomInt(col3.length);
+      this.interval = setInterval(() => this.tick(), 500);
+    } else {
+      this.setState({
+        loading: false,
+      });
+    }
   }
   
   tick() {
-    this.setState(state => ({}));
+    this.setState({
+      col1Idx: this.state.col1Idx + 1,
+      col2Idx: this.state.col2Idx + 1,
+      col3Idx: this.state.col3Idx + 1,
+    });
   }
 
   componentDidMount() {
@@ -496,13 +591,36 @@ class App extends Component {
           <MobileView>
             <MobileDialog/>
           </MobileView>
+          {/* GitHub Button */}
+          <Box textAlign="left" ml={5}>
+            <Tooltip title="GitHub Repo">
+              <a href={'https://github.com/jma8774/Slot-Machine-Crypto'} target="_blank" rel="noreferrer">
+                <IconButton  className={classes.github_btn}>
+                  <GitHubIcon/>
+                </IconButton >
+              </a>
+            </Tooltip>
+          </Box>
           {/* Introduction */}
-          <Introduction showInstruction={this.showInstruction} showGame={this.showGame}/>
+          <Introduction 
+            showInstruction={this.showInstruction} 
+            showGame={this.showGame}
+          />
           {/* What To Show */}
           <Box width="100%">
-            <Instruction showInstr={this.state.showInstr}/>
-            <Game showGame={this.state.showGame} startLoading={this.startLoading} loading={this.state.loading}/>
-            <Stats showGame={this.state.showGame} data={this.data} />
+            <Instruction 
+              showInstr={this.state.showInstr}
+            />
+            <Game 
+              showGame={this.state.showGame} 
+              setLoading={this.setLoading} 
+              loading={this.state.loading} 
+              colIdx={[this.state.col1Idx, this.state.col2Idx, this.state.col3Idx]}
+            />
+            <Stats 
+              showGame={this.state.showGame} 
+              data={this.data} 
+            />
           </Box>
         </ThemeProvider>
       </div>
