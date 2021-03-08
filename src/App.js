@@ -223,20 +223,16 @@ function Game({showGame, setLoading, loading, colIdx}) {
   const col3Idx = colIdx[2];
   // I want to show them like it's a real reel in a casino, not just all random
   const emojiDisplay = [
-    col1[col1Idx % col1.length],
-    col2[col2Idx % col2.length],
-    col3[col3Idx % col3.length],
-    col1[(col1Idx+1) % col1.length],
-    col2[(col2Idx+1) % col2.length],
-    col3[(col3Idx+1) % col3.length],
     col1[(col1Idx+2) % col1.length],
     col2[(col2Idx+2) % col2.length],
     col3[(col3Idx+2) % col3.length],
+    col1[(col1Idx+1) % col1.length],
+    col2[(col2Idx+1) % col2.length],
+    col3[(col3Idx+1) % col3.length],
+    col1[col1Idx % col1.length],
+    col2[col2Idx % col2.length],
+    col3[col3Idx % col3.length],
   ]
-  console.log(col1Idx)
-  console.log(col2Idx)
-  console.log(col3Idx)
-  console.log(emojiDisplay)
 
   if(!showGame) {
     return <span></span>
