@@ -1,60 +1,37 @@
 import './App.css';
 import 'fontsource-roboto';
 import React, {Component} from 'react';
-import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { makeStyles } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import { spacing } from "@material-ui/system";
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Fade from '@material-ui/core/Fade';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import green from "@material-ui/core/colors/green";
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TableContainer from '@material-ui/core/TableContainer';
-import CheckIcon from '@material-ui/icons/Check';
 import Chip from '@material-ui/core/Chip';
 import DoneIcon from '@material-ui/icons/Done';
-import DataGrid from '@material-ui/data-grid';
-import { BrowserView, MobileView, isBrowser, isMobile } from "react-device-detect";
+import { MobileView } from "react-device-detect";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SendIcon from '@material-ui/icons/Send';
-import TableFooter from '@material-ui/core/TableFooter';
-import TablePagination from '@material-ui/core/TablePagination';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import Switch from '@material-ui/core/Switch';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import Tooltip from '@material-ui/core/Tooltip';
-import Snackbar from '@material-ui/core/Snackbar';
 
 const theme = createMuiTheme({
   palette: {
@@ -141,6 +118,17 @@ const useStyles = makeStyles((theme) => ({
     left: theme.spacing(-2),
     bottom: theme.spacing(7),
     top: theme.spacing(17),
+  },
+  '@keyframes slideDownAnimation': {
+    '0%': {
+      transform: 'translateY(-100%)',
+    },
+    '100%': {
+      transform: 'translateY(100%)',
+    },
+  },
+  slideDown: {
+    animation: `$slideDownAnimation 100ms infinite linear`
   },
   stat_paper: {
     height: 300,
@@ -247,12 +235,13 @@ function Game({showGame, setLoading, loading, colIdx}) {
     col2[col2Idx % col2.length],
     col3[col3Idx % col3.length],
   ]
-  
+  const handleStart = () => {
+    ethEnabled();
+    setLoading();
+  }
+
   if(!showGame) {
     return <span></span>
-  }
-  else{
-    ethEnabled();
   }
   return (
     <Fade in={true} timeout={400}>
@@ -284,7 +273,7 @@ function Game({showGame, setLoading, loading, colIdx}) {
                           </span>
                         }
                         {/* Emoji spawn */}
-                          <Typography component="h1" variant="h2">
+                          <Typography className={(loading ? classes.slideDown : '')} component="h1" variant="h2">
                             {value}
                           </Typography>
                       </Paper>
@@ -293,10 +282,10 @@ function Game({showGame, setLoading, loading, colIdx}) {
               ))}
             </Grid>
           </Container>
-          <Box mt={3} mr={3}>
+          <Box mt={7} mr={3}>
             <Grid container justify="center" spacing={2}>
               <Grid item>
-                <Button disabled={loading} variant="contained" color="primary" onClick={setLoading} endIcon={<SendIcon/>} >
+                <Button disabled={loading} variant="contained" color="primary" onClick={handleStart} endIcon={<SendIcon/>} >
                   Start 
                 </Button>
               </Grid>
@@ -413,7 +402,6 @@ function Balance() {
 }
 
 function History({rows}) {
-  const classes = useStyles();
   return (
     <Container>
       <Box pt={2} pb={1}>
@@ -571,7 +559,7 @@ class App extends Component {
       this.col1Idx = getRandomInt(col1.length);
       this.col2Idx = getRandomInt(col2.length);
       this.col3Idx = getRandomInt(col3.length);
-      this.interval = setInterval(() => this.tick(), 250);
+      this.interval = setInterval(() => this.tick(), 100);
     } else {
       this.setState({
         loading: false,
@@ -645,5 +633,5 @@ export default () => {
   const classes = useStyles();
   return (
     <App classes={classes} />
-)
+  )
 }
