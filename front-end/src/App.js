@@ -33,7 +33,8 @@ const theme = createMuiTheme({
 // 7️⃣ = Red 7
 // 🍊 = Refund (Blue 7)
 // 🍒 = Cherry
-// 🍇 = Marill
+// 🍇 = Marill]
+const emojis = ['🍎','🍌','🔁','7️⃣','🍊','🍒','🍇']
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
 const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
@@ -110,41 +111,22 @@ class App extends Component {
       showGame: false,
       showInstr: false,
       loading: false,
-      profit: -10,
+      profit: 0,
       col1Idx: getRandomInt(col1.length),
       col2Idx: getRandomInt(col2.length),
       col3Idx: getRandomInt(col3.length),
       chartData: [
-        createChartData('00:00', 0),
-        createChartData('03:00', 1),
-        createChartData('06:00', 1.1),
-        createChartData('09:00', -1),
-        createChartData('12:00', 1.2),
-        createChartData('15:00', 0.001),
-        createChartData('18:00', 4),
-        createChartData('21:00', 5),
-        createChartData('24:00', undefined),
+        createChartData(new Date().toLocaleTimeString("en-US"), 0),
       ],
       historyData: [
-        createHistoryData(0, '00:00, 16 Mar, 2019', '👋🏾👋🏾👋🏾', 'Win', 5, 7),
-        createHistoryData(1, '03:00, 16 Mar, 2019', '🤚🏾🤚🏾🤚🏾', 'Lose', 11, -11),
-        createHistoryData(2, '06:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 500),
-        createHistoryData(3, '07:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 654.39),
-        createHistoryData(4, '07:15, 15 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 212.79),
-        createHistoryData(5, '08:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 312.44),
-        createHistoryData(6, '08:11, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 866.99),
-        createHistoryData(7, '09:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 100.81),
-        createHistoryData(8, '10:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 654.39),
-        createHistoryData(9, '11:00, 15 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 212.79),
-        createHistoryData(10, '12:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 312.44),
-        createHistoryData(11, '13:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 866.99),
-        createHistoryData(12, '14:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 100.81),
-        createHistoryData(13, '15:00, 16 Mar, 2019', '🧜🏽‍♀️🧑🏽‍✈️', 'Win', 13, 654.39),
-      ]
+      ],
+      curDate: new Date().toLocaleDateString("en-US"),
+      curTime: new Date().toLocaleTimeString("en-US")
     };
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
     this.setLoading = this.setLoading.bind(this);
+    this.startTime = this.state.curTime;
   }
   
   showGame(e) {
@@ -174,19 +156,40 @@ class App extends Component {
       this.col1Idx = getRandomInt(col1.length);
       this.col2Idx = getRandomInt(col2.length);
       this.col3Idx = getRandomInt(col3.length);
-      this.interval = setInterval(() => this.tick(), 100);
+      this.slotTimer = setInterval(() => this.slotTick(), 100);
+      this.updateTimer = setInterval(() => this.updateTick(), 3000);
     } else {
       this.setState({
         loading: false,
       });
+      clearInterval(this.slotTimer);
     }
   }
   
-  tick() {
+  slotTick() {
     this.setState({
       col1Idx: this.state.col1Idx + 1,
       col2Idx: this.state.col2Idx + 1,
       col3Idx: this.state.col3Idx + 1,
+    });
+  }
+
+  updateTick() {
+    const id = this.state.historyData.length
+    const newDate = new Date().toLocaleDateString("en-US")
+    const newTime = new Date().toLocaleTimeString("en-US")
+    const outcome = emojis[getRandomInt(emojis.length)] + emojis[getRandomInt(emojis.length)] + emojis[getRandomInt(emojis.length)]
+    const fee = getRandomInt(3) + 1
+    const profit = Math.random() >= 0.5  ? [0.5, 1, 1.5, 2, 2.5, 3][getRandomInt(6)] : -1 * fee
+    const status = profit > 0 ? "Win" : "Lose"
+    const newHistoryData = this.state.historyData.concat(createHistoryData(id, newDate + ' ' + newTime, outcome, status, fee, profit))
+    const newChartData = this.state.chartData.concat(createChartData(newTime, this.state.profit + profit))
+    this.setState({
+      curDate: newDate,
+      curTime: newTime,
+      profit: this.state.profit + profit,   
+      historyData: newHistoryData,
+      chartData: newChartData,
     });
   }
 
@@ -195,7 +198,8 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.slotTimer);
+    clearInterval(this.updateTimer);
   }
   
   render() {
@@ -237,13 +241,11 @@ class App extends Component {
             />
             <Stats 
               showGame={this.state.showGame} 
-              data={
-                {
-                  chartData: this.state.chartData, 
-                  historyData: this.state.historyData, 
-                  profit: this.state.profit
-                }
-              } 
+              chartData={this.state.chartData}
+              historyData={this.state.historyData}
+              profit={this.state.profit}
+              curDate={this.state.curDate}
+              startTime={this.startTime}
             />
           </Box>
         </ThemeProvider>

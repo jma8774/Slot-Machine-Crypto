@@ -120,7 +120,7 @@ function Game({showGame, setLoading, ethEnabled, loading, colIdx}) {
     col3[col3Idx % col3.length],
   ]
   const handleStart = () => {
-    ethEnabled();
+    // ethEnabled();
     setLoading();
   }
 
@@ -144,12 +144,12 @@ function Game({showGame, setLoading, ethEnabled, loading, colIdx}) {
                 </Button>
               </Tooltip>
             </Grid>
+              <Grid item>
               {loading
-                ? <Grid item>
-                    <CircularProgress />
-                  </Grid>
+                ?<CircularProgress />
                 : <span></span>
               }
+              </Grid>
           </Grid>
         </Box>
       </Box>
