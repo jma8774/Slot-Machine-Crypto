@@ -553,7 +553,7 @@ class App extends Component {
       this.col1Idx = getRandomInt(col1.length);
       this.col2Idx = getRandomInt(col2.length);
       this.col3Idx = getRandomInt(col3.length);
-      this.interval = setInterval(() => this.tick(), 500);
+      this.interval = setInterval(() => this.tick(), 250);
     } else {
       this.setState({
         loading: false,
