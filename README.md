@@ -5,4 +5,4 @@
 The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Heroku.
 
 ## Placeholder
-![Picture](https://i.postimg.cc/cL79tqnP/placeholder.png)
+![](https://i.postimg.cc/VkzTRLmz/placeholder.png)
