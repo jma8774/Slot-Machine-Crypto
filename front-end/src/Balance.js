@@ -12,27 +12,21 @@ const greenTheme = createMuiTheme({
   },
 });
 
-function monthToString(month) {
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  return months[month-1]
-}
-
-function Balance({profit, curDate}) {
-  const [month, date, year] = curDate.split("/")
+function Balance({profit}) {
   return (
     <Container>
-      <Box pt={2}>
+      <Box pt={2} pb={1}>
         <Typography component="h1" variant="h6" color="primary">
           <Box fontWeight="fontWeightBold">Total Winnings</Box>
         </Typography>
       </Box>
       <ThemeProvider theme={greenTheme}>
-        <Typography component="p" variant="h5" color={profit >= 0 ? "primary" : "error"}>
+        <Typography component="p" variant="h5" color={profit > 0 ? "primary" : "error"}>
           {profit} ETH
         </Typography>
       </ThemeProvider>
       <Typography color="textSecondary">
-        on {monthToString(month)} {date}, {year}
+        on 15 March, 2019
       </Typography>
     </Container>
   )

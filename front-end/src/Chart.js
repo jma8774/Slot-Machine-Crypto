@@ -12,28 +12,25 @@ const greenTheme = createMuiTheme({
   },
 });
 
-function Chart({data, curTime}) {
+function Chart({data}) {
   return (
     <Container>
       <Box pt={2} pb={1}>
         <Typography component="h1" variant="h6" color="primary">
           <Box fontWeight="fontWeightBold">Today</Box>
-          <Typography component="div" variant="subtitle2" color="textSecondary">
-            Starting from {curTime}
-          </Typography>
         </Typography>
       </Box>
       <ResponsiveContainer width="99%" aspect={3}>
         <LineChart
           data={data}
           margin={{
-            top: 5,
-            right: 35,
-            bottom: -18,
+            top: 16,
+            right: 25,
+            bottom: -12,
             left: 11,
           }}
         >
-          <XAxis dataKey="time" tick={false} stroke={greenTheme.palette.text.secondary} />
+          <XAxis dataKey="time" stroke={greenTheme.palette.text.secondary} />
           <YAxis stroke={greenTheme.palette.text.secondary}>
             <Label
               angle={270}
