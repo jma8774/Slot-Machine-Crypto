@@ -157,7 +157,7 @@ class App extends Component {
       this.col2Idx = getRandomInt(col2.length);
       this.col3Idx = getRandomInt(col3.length);
       this.slotTimer = setInterval(() => this.slotTick(), 100);
-      this.updateTimer = setInterval(() => this.updateTick(), 3000);
+      this.updateTimer = setInterval(() => this.updateTick(), 5000);
     } else {
       this.setState({
         loading: false,
