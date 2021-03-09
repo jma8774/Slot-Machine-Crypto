@@ -158,6 +158,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+// Web3 init
+const Web3 = require('web3')
+const rpcURL = 'https://kovan.infura.io/v3/a72c7e61b8fb4a978c526d28c9aa2b7c'
+const web3 = new Web3(rpcURL)
+// Metamask Pop-up
+const ethEnabled = () => {
+  if (window.ethereum) {
+    window.web3 = new Web3(window.ethereum);
+    window.ethereum.enable();
+    return true;
+  }
+  return false;
+}
+
 function Introduction({showInstruction, showGame}) {
   return (
     <Box mt={10}>
@@ -233,9 +247,12 @@ function Game({showGame, setLoading, loading, colIdx}) {
     col2[col2Idx % col2.length],
     col3[col3Idx % col3.length],
   ]
-
+  
   if(!showGame) {
     return <span></span>
+  }
+  else{
+    ethEnabled();
   }
   return (
     <Fade in={true} timeout={400}>
@@ -534,6 +551,7 @@ class App extends Component {
         showInstr: false,
       });
     }
+
   }
 
   showInstruction(e) {
