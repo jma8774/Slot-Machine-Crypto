@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme) => ({
 const Web3 = require('web3')
 const rpcURL = 'https://kovan.infura.io/v3/a72c7e61b8fb4a978c526d28c9aa2b7c'
 const web3 = new Web3(rpcURL)
-// Metamask Pop-up
+// Metamask Pop-up (Connect Account?)
 const ethEnabled = () => {
   if (window.ethereum) {
     window.web3 = new Web3(window.ethereum);
