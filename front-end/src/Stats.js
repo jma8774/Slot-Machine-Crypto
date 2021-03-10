@@ -40,11 +40,11 @@ function Stats({showGame, chartData, historyData, profit, curDate, startTime}) {
   return (
     <ThemeProvider theme={statTheme}>
       <Fade in={true} timeout={400}>
-        <Box mt={10} mb={4}>
+        <Box mt={10} mb={10}>
           <Container maxWidth="md">
             <Box textAlign="left" mb={3}>
               <Typography variant="h3" color="textPrimary">
-                Statistics
+                Statistics 
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
                 Below contains information about your recent interactions with the app, such as your game history, balance and balance chart.

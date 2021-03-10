@@ -110,22 +110,20 @@ class App extends Component {
     this.state = {
       showGame: false,
       showInstr: false,
-      loading: false,
+      phase: 0,
       profit: 0,
       col1Idx: getRandomInt(col1.length),
       col2Idx: getRandomInt(col2.length),
       col3Idx: getRandomInt(col3.length),
-      chartData: [
-        createChartData(new Date().toLocaleTimeString("en-US"), 0),
-      ],
-      historyData: [
-      ],
+      slowReelCol: -1,
+      chartData: [createChartData(new Date().toLocaleTimeString("en-US"), 0)],
+      historyData: [],
       curDate: new Date().toLocaleDateString("en-US"),
       curTime: new Date().toLocaleTimeString("en-US")
     };
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
-    this.setLoading = this.setLoading.bind(this);
+    this.setPhase = this.setPhase.bind(this);
     this.startTime = this.state.curTime;
   }
   
@@ -148,39 +146,65 @@ class App extends Component {
     }
   }
 
-  setLoading(e) {
-    if(!this.state.loading) {
+  setPhase(e, phase) {
+    this.setState({
+      phase: phase,
+    })
+    
+    // Waiting Phase
+    if(phase === 0) {
       this.setState({
-        loading: true,
-      });
-      this.col1Idx = getRandomInt(col1.length);
-      this.col2Idx = getRandomInt(col2.length);
-      this.col3Idx = getRandomInt(col3.length);
-      this.slotTimer = setInterval(() => this.slotTick(), 100);
-      this.updateTimer = setInterval(() => this.updateTick(), 5000);
-    } else {
-      this.setState({
-        loading: false,
-      });
+        slowReelCol: -1,
+      })
+      clearInterval(this.slowReelTimer);
+      clearInterval(this.phase0Timer);
       clearInterval(this.slotTimer);
+    } 
+    // Loading Phase
+    else if(phase === 1) {
+      this.setState({
+        col1Idx: getRandomInt(col1.length),
+        col2Idx: getRandomInt(col2.length),
+        col3Idx: getRandomInt(col3.length),
+      })
+      this.slotTimer = setInterval(() => this.slotTick(), 100);
+      // this.updateTimer = setInterval(() => this.updateTick(), 500);
+      this.phase2Timer = setInterval((e) => this.setPhase(e, 2), 2500);
+    } 
+    // Update Result Phase
+    else if(phase === 2) {
+      this.slowReelTimer = setInterval(() => this.slowReelTick(), 500);
+      this.phase0Timer = setInterval((e) => this.setPhase(e, 0), 2500);
+      this.updateTick();
+      clearInterval(this.updateTimer);
+      clearInterval(this.phase2Timer);
     }
   }
   
+  // Function to animate each column's slow animation for when the result is showing
+  slowReelTick() {
+    this.setState({
+      slowReelCol: this.state.slowReelCol + 1,
+    })
+  }
+
+  // Function to animate each column's when it is loading
   slotTick() {
     this.setState({
-      col1Idx: this.state.col1Idx + 1,
-      col2Idx: this.state.col2Idx + 1,
-      col3Idx: this.state.col3Idx + 1,
+      col1Idx: this.state.slowReelCol<0 ? this.state.col1Idx + 1 : this.state.col1Idx,
+      col2Idx: this.state.slowReelCol<1 ? this.state.col2Idx + 1 : this.state.col2Idx,
+      col3Idx: this.state.slowReelCol<2 ? this.state.col3Idx + 1 : this.state.col3Idx,
     });
   }
 
+  // Function to update Stats randomly (for testing)
   updateTick() {
     const id = this.state.historyData.length
     const newDate = new Date().toLocaleDateString("en-US")
     const newTime = new Date().toLocaleTimeString("en-US")
     const outcome = emojis[getRandomInt(emojis.length)] + emojis[getRandomInt(emojis.length)] + emojis[getRandomInt(emojis.length)]
     const fee = getRandomInt(3) + 1
-    const profit = Math.random() >= 0.5  ? [0.5, 1, 1.5, 2, 2.5, 3][getRandomInt(6)] : -1 * fee
+    const profit = Math.random() >= 0.5  ? [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4][getRandomInt(8)] : -1 * fee
     const status = profit > 0 ? "Win" : "Lose"
     const newHistoryData = this.state.historyData.concat(createHistoryData(id, newDate + ' ' + newTime, outcome, status, fee, profit))
     const newChartData = this.state.chartData.concat(createChartData(newTime, this.state.profit + profit))
@@ -194,7 +218,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    
+
   }
 
   componentWillUnmount() {
@@ -234,10 +258,11 @@ class App extends Component {
             />
             <Game 
               showGame={this.state.showGame} 
-              setLoading={this.setLoading} 
+              setPhase={this.setPhase} 
               ethEnabled={ethEnabled}
-              loading={this.state.loading} 
+              phase={this.state.phase} 
               colIdx={[this.state.col1Idx, this.state.col2Idx, this.state.col3Idx]}
+              slowReelCol={this.state.slowReelCol}
             />
             <Stats 
               showGame={this.state.showGame} 

@@ -9,9 +9,25 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableFooter from '@material-ui/core/TableFooter';
 import Chip from '@material-ui/core/Chip';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+  removeBottom: {
+    borderBottom: "none",
+  },
+  rowHeight: {
+    height: theme.spacing(10),
+  },
+}));
 
 const greenRedTheme = createMuiTheme({
   palette: {
@@ -22,6 +38,20 @@ const greenRedTheme = createMuiTheme({
 });
 
 function History({rows}) {
+  const classes = useStyles();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const emptyRows = rowsPerPage - (rows.length - page * rowsPerPage)
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Container>
       <Box pt={2} pb={1}>
@@ -29,7 +59,7 @@ function History({rows}) {
           <Box fontWeight="fontWeightBold">History</Box>
         </Typography>
       </Box>
-      <Box pb={3}>
+      <Box>
         <Table>
           <TableHead>
             <TableRow>
@@ -42,7 +72,10 @@ function History({rows}) {
           </TableHead>
           <ThemeProvider theme={greenRedTheme}>
             <TableBody>
-              {rows.map((row) => (
+              {(rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+              ).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.date}</TableCell>
                   <TableCell>{row.outcome}</TableCell>
@@ -62,7 +95,26 @@ function History({rows}) {
                   </TableCell>
                 </TableRow>
               ))}
+
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 65 * emptyRows}}>
+                  <TableCell colSpan={5} />
+                </TableRow>
+              )}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination 
+                  className={classes.removeBottom}
+                  rowsPerPageOptions={[5, 10, 15]} 
+                  count={rows.length}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              </TableRow>
+            </TableFooter>
           </ThemeProvider>
         </Table>
       </Box>

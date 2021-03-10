@@ -11,7 +11,6 @@ import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-u
 import Fade from '@material-ui/core/Fade';
 import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
-import Tooltip from '@material-ui/core/Tooltip';
 import green from "@material-ui/core/colors/green";
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
@@ -34,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
     textAlign: 'center',
+  },
+  circularProgress: {
+    position: "absolute",
+    left: theme.spacing(1),
   },
   rowIndicSide: {
     position: 'absolute',
@@ -60,12 +63,42 @@ const useStyles = makeStyles((theme) => ({
       transform: 'translateY(100%)',
     },
   },
-  slideDown: {
+  slideDownInfinite: {
     animation: `$slideDownAnimation 100ms infinite linear`
+  },
+  '@keyframes slideDownHalfAnimation': {
+    '0%': {
+      transform: 'translateY(-100%)',
+    },
+    '100%': {
+      transform: 'translateY(0%)',
+    },
+  },
+  slideDownEaseOut: {
+    animation: `$slideDownHalfAnimation 500ms ease-out`
   },
 }));
 
-function SlotDisplay({emojiDisplay, loading}) {
+function EmojiDisplay({value, idx, phase, slowReelCol}) {
+  const classes = useStyles();
+  let toRender;
+  if(phase === 2) {
+    toRender =
+    <Typography className={(slowReelCol>=idx%3 ? classes.slideDownEaseOut : classes.slideDownInfinite)} component="h1" variant="h2">
+      {value}
+    </Typography>
+  } else {
+    toRender = 
+      <Typography className={(phase === 1 ? classes.slideDownInfinite : '')} component="h1" variant="h2">
+        {value}
+      </Typography>
+  }
+  return (
+    toRender
+  )
+}
+
+function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   const classes = useStyles();
   return(
     emojiDisplay.map((value, idx) => (
@@ -93,9 +126,7 @@ function SlotDisplay({emojiDisplay, loading}) {
               </span>
             }
             {/* Emoji spawn */}
-              <Typography className={(loading ? classes.slideDown : '')} component="h1" variant="h2">
-                {value}
-              </Typography>
+            <EmojiDisplay value={value} idx={idx} phase={phase} slowReelCol={slowReelCol}/>
           </Paper>
         </Box>
       </Grid>
@@ -103,7 +134,8 @@ function SlotDisplay({emojiDisplay, loading}) {
   )
 }
 
-function Game({showGame, setLoading, ethEnabled, loading, colIdx}) {
+function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol}) {
+  const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
   const col3Idx = colIdx[2];
@@ -119,9 +151,9 @@ function Game({showGame, setLoading, ethEnabled, loading, colIdx}) {
     col2[col2Idx % col2.length],
     col3[col3Idx % col3.length],
   ]
-  const handleStart = () => {
+  const handleStart = (e) => {
     // ethEnabled();
-    setLoading();
+    setPhase(e, 1);
   }
 
   if(!showGame) {
@@ -132,21 +164,19 @@ function Game({showGame, setLoading, ethEnabled, loading, colIdx}) {
       <Box mt={10}>
         <Container maxWidth="sm">
           <Grid container justify="center" spacing={4}>
-            <SlotDisplay emojiDisplay={emojiDisplay} loading={loading}/>
+            <SlotDisplay emojiDisplay={emojiDisplay} phase={phase} slowReelCol={slowReelCol}/>
           </Grid>
         </Container>
         <Box mt={7} mr={3}>
           <Grid container justify="center" spacing={2}>
             <Grid item>
-              <Tooltip title="Initialize with MetaMask">
-                <Button disabled={loading} variant="contained" color="primary" onClick={handleStart} endIcon={<SendIcon/>} >
-                  Start 
-                </Button>
-              </Tooltip>
+              <Button disabled={phase !== 0} variant="contained" color="primary" onClick={(e) => handleStart(e)} endIcon={<SendIcon/>} >
+                Start 
+              </Button>
             </Grid>
-              <Grid item>
-              {loading
-                ?<CircularProgress />
+              <Grid item style={{position: "relative"}}>
+              {phase === 1
+                ?<CircularProgress className={classes.circularProgress}/>
                 : <span></span>
               }
               </Grid>
