@@ -13,6 +13,7 @@ import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
 import green from "@material-ui/core/colors/green";
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import WarningIcon from '@material-ui/icons/Warning';
 
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
@@ -134,7 +135,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol}) {
+function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol, updateStatsLikeCrazy}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
@@ -174,7 +175,12 @@ function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol}) {
                 Start 
               </Button>
             </Grid>
-              <Grid item style={{position: "relative"}}>
+            <Grid item>
+              <Button disabled={phase !== 0} variant="contained" color="secondary" onClick={updateStatsLikeCrazy} endIcon={<WarningIcon/>} >
+                Update Stats Like Crazy For Fun
+              </Button>
+            </Grid>
+            <Grid item style={{position: "relative"}}>
               {phase === 1
                 ?<CircularProgress className={classes.circularProgress}/>
                 : <span></span>
