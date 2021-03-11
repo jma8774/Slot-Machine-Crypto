@@ -124,7 +124,6 @@ class App extends Component {
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
     this.setPhase = this.setPhase.bind(this);
-    this.updateStatsLikeCrazy = this.updateStatsLikeCrazy.bind(this);
     this.startTime = this.state.curTime;
   }
   
@@ -182,10 +181,6 @@ class App extends Component {
     }
   }
   
-  updateStatsLikeCrazy() {
-    this.updateLikeCrazyTimer = setInterval(() => this.updateTick(), 100);
-  }
-
   // Function to animate each column's slow animation for when the result is showing
   slowReelTick() {
     this.setState({
@@ -229,7 +224,6 @@ class App extends Component {
   componentWillUnmount() {
     clearInterval(this.slotTimer);
     clearInterval(this.updateTimer);
-    clearInterval(this.updateLikeCrazyTimer);
   }
   
   render() {
@@ -269,7 +263,6 @@ class App extends Component {
               phase={this.state.phase} 
               colIdx={[this.state.col1Idx, this.state.col2Idx, this.state.col3Idx]}
               slowReelCol={this.state.slowReelCol}
-              updateStatsLikeCrazy={this.updateStatsLikeCrazy}
             />
             <Stats 
               showGame={this.state.showGame} 
