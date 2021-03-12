@@ -141,7 +141,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, account, setValue, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
+function Game({showGame, account, setValue, value, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
@@ -171,13 +171,15 @@ function Game({showGame, account, setValue, setPhase, sendTransaction, phase, co
     } else {
       value = "";
       setError(true)
-      setHelperText('Input 1, 2, or 3')
+      setHelperText('Input should be 1, 2, or 3')
     }
     setValue(value);
   }
 
   const handleStart = (e) => {
-    if(!account || error)
+    if(!account || !value)
+      setError(true)
+      setHelperText('Input should be 1, 2, or 3')
       return
     setPhase(e, 1);
     sendTransaction();

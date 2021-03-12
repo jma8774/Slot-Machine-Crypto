@@ -358,6 +358,7 @@ class App extends Component {
               showGame={this.state.showGame} 
               account={this.state.account}
               setValue={this.setValue}
+              value={this.state.value}
               setPhase={this.setPhase} 
               sendTransaction={this.sendTransaction}
               phase={this.state.phase} 
