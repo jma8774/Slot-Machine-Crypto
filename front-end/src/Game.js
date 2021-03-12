@@ -17,6 +17,7 @@ import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import ErrorIcon from '@material-ui/icons/Error';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
@@ -203,33 +204,35 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
         <Box mt={7} mr={3}>
           <Grid container justify="center" spacing={2}>
             <Grid item style={{position: "relative"}} className={classes.textField}>
-              <TextField 
-                id="filled-basic" 
-                label="Wei" 
-                variant="outlined" 
-                size="small" 
-                required={true} 
-                error={error} 
-                helperText={helperText} 
-                onChange={handleChange}
-                defaultValue={value[2]}
-                disabled={(phase===0 || !loading)
-                  ? false
-                  : true
-                }
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoneyIcon/>
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {error && <ErrorIcon color="error"/>}
-                    </InputAdornment>
-                  ),
-                }}
+              <Tooltip placement="top" arrow={true} title={"1 Ether is equivalent to 1,000,000,000,000,000,000 (1e18) Wei "}>
+                <TextField 
+                  id="filled-basic" 
+                  label="Wei" 
+                  variant="outlined" 
+                  size="small" 
+                  required={true} 
+                  error={error} 
+                  helperText={helperText} 
+                  onChange={handleChange}
+                  defaultValue={value[2]}
+                  disabled={(phase===0 || !loading)
+                    ? false
+                    : true
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoneyIcon/>
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {error && <ErrorIcon color="error"/>}
+                      </InputAdornment>
+                    ),
+                  }}
                 />
+              </Tooltip>
             </Grid>
             <Grid item>
               <Button disabled={phase !== 0} variant="contained" color="primary" onClick={(e) => handleStart(e)} endIcon={<SendIcon/>} >
