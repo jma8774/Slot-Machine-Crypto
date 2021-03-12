@@ -13,6 +13,11 @@ import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
 import green from "@material-ui/core/colors/green";
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import ErrorIcon from '@material-ui/icons/Error';
+import CheckIcon from '@material-ui/icons/Check';
 
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
@@ -33,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(5),
     paddingBottom: theme.spacing(5),
     textAlign: 'center',
+  },
+  textField: {
+    width: theme.spacing(25),
   },
   circularProgress: {
     position: "absolute",
@@ -134,7 +142,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, account, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
+function Game({showGame, account, setValue, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
@@ -151,12 +159,31 @@ function Game({showGame, account, setPhase, sendTransaction, phase, colIdx, slow
     col2[col2Idx % col2.length],
     col3[col3Idx % col3.length],
   ]
+
+  const [error, setError] = React.useState(false)
+  const [helperText, setHelperText] = React.useState('')
+  const handleChange = (e) => {
+    let value;
+    if(['1', '2', '3'].includes(e.target.value)) {
+      value = "0x" + e.target.value;
+      setError(false)
+      setHelperText('')
+      console.log("Value changed to " + value)
+    } else {
+      value = "";
+      setError(true)
+      setHelperText('Input 1, 2, or 3')
+    }
+    setValue(value);
+  }
+
   const handleStart = (e) => {
-    if(!account)
+    if(!account || error)
       return
     setPhase(e, 1);
     sendTransaction();
   }
+
 
   if(!showGame) {
     return <span></span>
@@ -171,6 +198,30 @@ function Game({showGame, account, setPhase, sendTransaction, phase, colIdx, slow
         </Container>
         <Box mt={7} mr={3}>
           <Grid container justify="center" spacing={2}>
+            <Grid item style={{position: "relative"}} className={classes.textField}>
+              <TextField 
+                id="filled-basic" 
+                label="Wei" 
+                variant="outlined" 
+                size="small" 
+                required={true} 
+                error={error} 
+                helperText={helperText} 
+                onChange={handleChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AttachMoneyIcon/>
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {error && <ErrorIcon color="error"/>}
+                    </InputAdornment>
+                  ),
+                }}
+                />
+            </Grid>
             <Grid item>
               <Button disabled={phase !== 0} variant="contained" color="primary" onClick={(e) => handleStart(e)} endIcon={<SendIcon/>} >
                 Start 

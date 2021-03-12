@@ -116,8 +116,8 @@ class App extends Component {
     this.state = {
       hasMetaMask: false,
       account: '',
+      value: '',
       txHash: '',
-      tranStatus: null,
       showGame: false,
       showInstr: false,
       phase: 0,
@@ -135,8 +135,8 @@ class App extends Component {
     this.showInstruction = this.showInstruction.bind(this);
     this.setPhase = this.setPhase.bind(this);
     this.sendTransaction = this.sendTransaction.bind(this);
+    this.setValue = this.setValue.bind(this);
     this.startTime = this.state.curTime;
-    this.value = "0x3";
     this.sendTo = "0xe5eAFA94b92Ba8720544EeB2070594c7727f7E03";
   }
   
@@ -188,6 +188,12 @@ class App extends Component {
       this.phase0Timer = setInterval((e) => this.setPhase(e, 0), 2500);
       this.updateTimer =  setInterval(() => this.updateTick(), 1600);
     }
+  }
+
+  setValue(value) {
+    this.setState({
+      value: value,
+    })
   }
   
   // Function to animate each column's slow animation for when the result is showing
@@ -260,7 +266,7 @@ class App extends Component {
       gas: '0x7530', // customizable by user during MetaMask confirmation.
       to: this.sendTo, // Required except during contract publications.
       from: this.state.account, // must match user's active address.
-      value: this.value, // Only required to send ether to the recipient from the initiating external account.
+      value: this.state.value, // Only required to send ether to the recipient from the initiating external account.
       data:
         '0x7f7465737432000000000000000000000000000000000000000000000000000000600057', // Optional, but used for defining smart contract creation and interaction.
       chainId: '0x3', // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
@@ -274,7 +280,6 @@ class App extends Component {
       console.log("Transaction confirmed: Block is located at https://kovan.etherscan.io/tx/" + txHash)
       this.setState({
         txHash: txHash,
-        tranStatus: true,
       })
     })
     .catch(() => {
@@ -352,6 +357,7 @@ class App extends Component {
             <Game 
               showGame={this.state.showGame} 
               account={this.state.account}
+              setValue={this.setValue}
               setPhase={this.setPhase} 
               sendTransaction={this.sendTransaction}
               phase={this.state.phase} 
