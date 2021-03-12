@@ -32,7 +32,7 @@ function Balance({profit, curDate}) {
         </Typography>
       </ThemeProvider>
       <Typography color="textSecondary">
-        on {monthToString(month)} {date}, {year}
+        on {monthToString(month)}   {date}, {year}
       </Typography>
     </Container>
   )

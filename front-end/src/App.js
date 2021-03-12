@@ -15,11 +15,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import Tooltip from '@material-ui/core/Tooltip';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 // Custom Components
 import Introduction from './Introduction';
 import Instruction from './Instruction';
 import Game from './Game';
 import Stats from './Stats';
+
 
 const theme = createMuiTheme({
   palette: {
@@ -53,18 +56,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// Web3 init
-const Web3 = require('web3')
-const rpcURL = 'https://kovan.infura.io/v3/a72c7e61b8fb4a978c526d28c9aa2b7c'
-const web3 = new Web3(rpcURL)
-// Metamask Pop-up (Connect Account?)
-const ethEnabled = () => {
-  if (window.ethereum) {
-    window.web3 = new Web3(window.ethereum);
-    window.ethereum.enable();
-    return true;
-  }
-  return false;
+function SnackbarDisplay({severity, msg, duration}) {
+  const [open, setOpen] = React.useState(true);
+  const handleClose = (event, reason) => {
+    if(reason === "clickaway"){
+      return
+    }
+    setOpen(false)
+  };
+  return(
+    <Snackbar open={open} autoHideDuration={duration} onClose={handleClose}>
+      <Alert onClose={handleClose} variant="filled" severity={severity}>
+        {msg}
+      </Alert>
+    </Snackbar>
+  )
 }
 
 function MobileDialog() {
@@ -108,6 +114,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      account: '',
+      txHash: '',
+      tranStatus: null,
       showGame: false,
       showInstr: false,
       phase: 0,
@@ -124,7 +133,11 @@ class App extends Component {
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
     this.setPhase = this.setPhase.bind(this);
+    this.sendTransaction = this.sendTransaction.bind(this);
     this.startTime = this.state.curTime;
+    this.hasMetaMask = false;
+    this.value = "0x3";
+    this.sendTo = "0xe5eAFA94b92Ba8720544EeB2070594c7727f7E03";
   }
   
   showGame(e) {
@@ -134,7 +147,6 @@ class App extends Component {
         showInstr: false,
       });
     }
-
   }
 
   showInstruction(e) {
@@ -155,6 +167,7 @@ class App extends Component {
     if(phase === 0) {
       this.setState({
         slowReelCol: -1,
+        txHash: '',
       })
       clearInterval(this.slowReelTimer);
       clearInterval(this.phase0Timer);
@@ -168,16 +181,12 @@ class App extends Component {
         col3Idx: getRandomInt(col3.length),
       })
       this.slotTimer = setInterval(() => this.slotTick(), 100);
-      // this.updateTimer = setInterval(() => this.updateTick(), 500);
-      this.phase2Timer = setInterval((e) => this.setPhase(e, 2), 2500);
     } 
     // Update Result Phase
     else if(phase === 2) {
       this.slowReelTimer = setInterval(() => this.slowReelTick(), 500);
       this.phase0Timer = setInterval((e) => this.setPhase(e, 0), 2500);
-      this.updateTick();
-      clearInterval(this.updateTimer);
-      clearInterval(this.phase2Timer);
+      this.updateTimer =  setInterval(() => this.updateTick(), 1600);
     }
   }
   
@@ -215,10 +224,71 @@ class App extends Component {
       historyData: newHistoryData,
       chartData: newChartData,
     });
+    clearInterval(this.updateTimer);
   }
 
-  componentDidMount() {
+  // Get the address of the MetaMask when website loads
+  async getAccount() {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    this.setState({
+      account: accounts[0],
+    })
+    console.log("Initialized with account: " + this.state.account)
+  }
 
+  // Automatically detects change to account in MetaMask
+  async onAccountChange() {
+    await window.ethereum.on('accountsChanged', (accounts) => {
+      this.setState({
+        account: accounts[0]
+      })
+      console.log("On account change to: " + this.state.account)
+    });
+  }
+
+  async sendTransaction() {
+    if(!this.hasMetaMask)
+      return
+    const transactionParameters = {
+      nonce: '0x00', // ignored by MetaMask
+      gasPrice: '0x174876e800', // customizable by user during MetaMask confirmation.
+      gas: '0x7530', // customizable by user during MetaMask confirmation.
+      to: this.sendTo, // Required except during contract publications.
+      from: this.state.account, // must match user's active address.
+      value: this.value, // Only required to send ether to the recipient from the initiating external account.
+      data:
+        '0x7f7465737432000000000000000000000000000000000000000000000000000000600057', // Optional, but used for defining smart contract creation and interaction.
+      chainId: '0x3', // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+    };
+
+    await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    })
+    .then((txHash) => {
+      console.log("Transaction confirmed: Block is located at https://kovan.etherscan.io/tx/" + txHash)
+      this.setState({
+        txHash: txHash,
+        tranStatus: true,
+      })
+    })
+    .catch(() => {
+      console.log("User denied transaction.");
+    })
+    this.setPhase(null, 2);
+  }
+
+  // This function is called first when React is built
+  async componentDidMount() {
+    // MetaMask shenanigans
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is installed!');
+      this.hasMetaMask=true;
+      this.getAccount()
+      this.onAccountChange()
+    } else {
+      console.log('MetaMask is not installed!');
+    }
   }
 
   componentWillUnmount() {
@@ -236,6 +306,16 @@ class App extends Component {
           <MobileView>
             <MobileDialog/>
           </MobileView>
+          {this.hasMetaMask
+            ? <SnackbarDisplay severity="success" duration={2000} msg="MetaMask is installed!"/>
+            : <SnackbarDisplay severity="error" duration={3500} msg="MetaMask not installed, please follow the instructions and install it!"/>
+          }
+          {(this.state.txHash && this.state.phase === 2) &&
+            <SnackbarDisplay severity="success" duration={5000} msg={"Transaction confirmed at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
+          }
+          {(!this.state.txHash && this.state.phase === 2) &&
+            <SnackbarDisplay severity="error" duration={5000} msg="Transaction failed."/>
+          }
           {/* GitHub Button */}
           <Box textAlign="left" ml={5}>
             <Tooltip title="GitHub Repo">
@@ -258,8 +338,9 @@ class App extends Component {
             />
             <Game 
               showGame={this.state.showGame} 
+              hasMetaMask={this.hasMetaMask}
               setPhase={this.setPhase} 
-              ethEnabled={ethEnabled}
+              sendTransaction={this.sendTransaction}
               phase={this.state.phase} 
               colIdx={[this.state.col1Idx, this.state.col2Idx, this.state.col3Idx]}
               slowReelCol={this.state.slowReelCol}

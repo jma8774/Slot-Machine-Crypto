@@ -134,7 +134,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol}) {
+function Game({showGame, hasMetaMask, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
@@ -152,8 +152,10 @@ function Game({showGame, setPhase, ethEnabled, phase, colIdx, slowReelCol}) {
     col3[col3Idx % col3.length],
   ]
   const handleStart = (e) => {
-    // ethEnabled();
+    if(!hasMetaMask)
+      return
     setPhase(e, 1);
+    sendTransaction();
   }
 
   if(!showGame) {
