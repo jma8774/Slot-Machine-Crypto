@@ -177,10 +177,11 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
   }
 
   const handleStart = (e) => {
-    if(!account || !value)
+    if(!account || !value) {
       setError(true)
       setHelperText('Input should be 1, 2, or 3')
       return
+    }
     setPhase(e, 1);
     sendTransaction();
   }

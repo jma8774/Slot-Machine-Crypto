@@ -11,7 +11,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import Divider from '@material-ui/core/Divider';
 import Link from '@material-ui/core/Link';
-import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   instruction_container: {
