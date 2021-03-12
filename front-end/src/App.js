@@ -114,6 +114,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      hasMetaMask: false,
       account: '',
       txHash: '',
       tranStatus: null,
@@ -135,7 +136,6 @@ class App extends Component {
     this.setPhase = this.setPhase.bind(this);
     this.sendTransaction = this.sendTransaction.bind(this);
     this.startTime = this.state.curTime;
-    this.hasMetaMask = false;
     this.value = "0x3";
     this.sendTo = "0xe5eAFA94b92Ba8720544EeB2070594c7727f7E03";
   }
@@ -239,15 +239,20 @@ class App extends Component {
   // Automatically detects change to account in MetaMask
   async onAccountChange() {
     await window.ethereum.on('accountsChanged', (accounts) => {
+      if(accounts.length === 0)
+        return
       this.setState({
         account: accounts[0]
+      })
+      this.setState({
+        hasMetaMask: true,
       })
       console.log("On account change to: " + this.state.account)
     });
   }
 
   async sendTransaction() {
-    if(!this.hasMetaMask)
+    if(!this.state.hasMetaMask)
       return
     const transactionParameters = {
       nonce: '0x00', // ignored by MetaMask
@@ -283,7 +288,9 @@ class App extends Component {
     // MetaMask shenanigans
     if (typeof window.ethereum !== 'undefined') {
       console.log('MetaMask is installed!');
-      this.hasMetaMask=true;
+      this.setState({
+        hasMetaMask: true,
+      })
       this.getAccount()
       this.onAccountChange()
     } else {
@@ -306,9 +313,15 @@ class App extends Component {
           <MobileView>
             <MobileDialog/>
           </MobileView>
-          {this.hasMetaMask
-            ? <SnackbarDisplay severity="success" duration={2000} msg="MetaMask is installed!"/>
-            : <SnackbarDisplay severity="error" duration={3500} msg="MetaMask not installed, please follow the instructions and install it!"/>
+          {/* Update Snackbars for various things */}
+          {(this.state.hasMetaMask && !this.state.account) &&
+            <SnackbarDisplay severity="error" duration={2000} msg="Please login to MetaMask."/>
+            }
+          {(this.state.hasMetaMask && this.state.account) &&
+            <SnackbarDisplay severity="success" duration={2000} msg="MetaMask is ready to go!"/>
+          }
+          {!this.state.hasMetaMask &&
+            <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and install it."/>
           }
           {(this.state.txHash && this.state.phase === 2) &&
             <SnackbarDisplay severity="success" duration={5000} msg={"Transaction confirmed at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
@@ -338,7 +351,7 @@ class App extends Component {
             />
             <Game 
               showGame={this.state.showGame} 
-              hasMetaMask={this.hasMetaMask}
+              account={this.state.account}
               setPhase={this.setPhase} 
               sendTransaction={this.sendTransaction}
               phase={this.state.phase} 

@@ -134,7 +134,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, hasMetaMask, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
+function Game({showGame, account, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
@@ -152,7 +152,7 @@ function Game({showGame, hasMetaMask, setPhase, sendTransaction, phase, colIdx, 
     col3[col3Idx % col3.length],
   ]
   const handleStart = (e) => {
-    if(!hasMetaMask)
+    if(!account)
       return
     setPhase(e, 1);
     sendTransaction();
