@@ -15,8 +15,8 @@ function Introduction({showInstruction, showGame}) {
         </Typography>
         <Box py={2}>
           <Typography variant="h6" align="center" color="textSecondary" paragraph>
-            Something short and leading about our game. Why this is a thing or why this should be a thing? Anyways, need to add something here later on. 
-            At least 3 lines would probably look the best. That's why I am still typing so I can pad it out.
+            Cryptocurrency is the future, that's why we built an online anonymous slot machine that uses Ethereum as payment.
+            This website utilizes MetaMask to access player's crypto wallets and the Kovan Test Network, an alternative to the Etherum Mainnet, for testing.
           </Typography>
         </Box>
         <div>
