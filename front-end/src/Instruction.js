@@ -103,8 +103,8 @@ function Instruction({showInstr}) {
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 5
                   <Typography variant="subtitle1" color="textSecondary">
-                    To get testing Ethereum, we head to the <Link href="https://gitter.im/kovan-testnet/faucet" target="_blank" rel="noreferrer" color="secondary">faucet</Link>. 
-                    Then, copy the account address and paste it into the faucet chatroom. (It can take up to a minute or more to receive your 6 Ethereum)
+                    To get testing Ether, we head to the <Link href="https://gitter.im/kovan-testnet/faucet" target="_blank" rel="noreferrer" color="secondary">faucet</Link>. 
+                    Then, copy the account address and paste it into the faucet chatroom. (It can take up to a minute or more to receive your 6 Ether)
                   </Typography>
                   <img alt="Step 5 MetaMask" src={process.env.PUBLIC_URL + "/metamask_5.png"}/>
                 </Typography>

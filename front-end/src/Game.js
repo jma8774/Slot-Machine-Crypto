@@ -161,6 +161,7 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
 
   const [error, setError] = React.useState(false)
   const [helperText, setHelperText] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
   const handleChange = (e) => {
     let value;
     if(['1', '2', '3'].includes(e.target.value)) {
@@ -184,6 +185,7 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
     }
     setPhase(e, 1);
     sendTransaction();
+    setLoading(true);
   }
 
 
@@ -210,6 +212,10 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
                 error={error} 
                 helperText={helperText} 
                 onChange={handleChange}
+                disabled={(phase===0 || !loading)
+                  ? false
+                  : true
+                }
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
