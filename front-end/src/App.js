@@ -326,13 +326,13 @@ class App extends Component {
             <SnackbarDisplay severity="success" duration={2000} msg="MetaMask is ready to go!"/>
           }
           {!this.state.hasMetaMask &&
-            <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and install it."/>
+            <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and set it up."/>
           }
           {(this.state.txHash && this.state.phase === 2) &&
-            <SnackbarDisplay severity="success" duration={5000} msg={"Transaction confirmed at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
+            <SnackbarDisplay severity="success" duration={8000} msg={"Transaction confirmed at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
           }
           {(!this.state.txHash && this.state.phase === 2) &&
-            <SnackbarDisplay severity="error" duration={5000} msg="Transaction failed."/>
+            <SnackbarDisplay severity="error" duration={6000} msg="Transaction failed."/>
           }
           {/* GitHub Button */}
           <Box textAlign="left" ml={5}>
