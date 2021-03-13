@@ -179,7 +179,12 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
   }
 
   const handleStart = (e) => {
-    if(!account || !value) {
+    if(!account) {
+      setError(true)
+      setHelperText('Connect to MetaMask')
+      return
+    }
+    if(!value) {
       setError(true)
       setHelperText('Input should be 1, 2, or 3')
       return
