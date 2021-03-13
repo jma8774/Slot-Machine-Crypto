@@ -215,7 +215,7 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
                   helperText={helperText} 
                   onChange={handleChange}
                   defaultValue={value[2]}
-                  disabled={(phase===0 || !loading)
+                  disabled={((phase===0 || !loading) && account)
                     ? false
                     : true
                   }
