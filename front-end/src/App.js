@@ -26,7 +26,7 @@ import Stats from './Stats';
 
 const Web3 = require('web3')
 const metaNet = new Web3(window.web3.currentProvider);
-const contract_addr = '0x8C85a064B1Ccb8912F2A218f1829E261D4B7DCbE'
+const contract_addr = '0xb60a6B392EBF38DF17B4a97765Da677C79E21C25'
 const contract_abi = [
 	{
 		"inputs": [],
@@ -785,7 +785,7 @@ class App extends Component {
     contract.methods.getFinishedGames().call()
     .then(res => {
       var gameResult = this.getLatestGame(res)
-      if(gameResult[3] > curTime) {
+      if(gameResult && gameResult[3] > curTime) {
         clearInterval(this.checkContractTimer)
         // console.log("Time:",gameResult[3],'>',curTime)
         this.setState({
