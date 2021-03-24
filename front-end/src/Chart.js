@@ -13,6 +13,7 @@ const greenTheme = createMuiTheme({
 });
 
 function Chart({data}) {
+  // var reversedData = [...data].reverse()
   return (
     <Container>
       <Box pt={2} pb={1}>

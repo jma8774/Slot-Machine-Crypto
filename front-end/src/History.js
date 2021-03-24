@@ -51,6 +51,9 @@ function History({rows, page, setPage}) {
     setPage(0);
   };
 
+  var newRows = [...rows]
+  newRows.reverse()
+
   return (
     <Container>
       <Box pt={2} pb={1}>
@@ -72,8 +75,8 @@ function History({rows, page, setPage}) {
           <ThemeProvider theme={greenRedTheme}>
             <TableBody>
               {(rowsPerPage > 0
-              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : rows
+              ? newRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : newRows
               ).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.date}</TableCell>

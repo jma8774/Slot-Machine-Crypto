@@ -16,7 +16,7 @@ function Introduction({showInstruction, showGame}) {
         <Box py={2}>
           <Typography variant="h6" align="center" color="textSecondary" paragraph>
             Cryptocurrency is the future, that's why we built an online anonymous slot machine that uses Ether as payment.
-            This website utilizes MetaMask to access player's crypto wallets and the Kovan Test Network, an alternative to the Etherum Mainnet, for testing.
+            This website utilizes MetaMask to access player's crypto wallets and the Kovan Test Network, an alternative to the Ethereum Mainnet, for testing.
           </Typography>
         </Box>
         <div>

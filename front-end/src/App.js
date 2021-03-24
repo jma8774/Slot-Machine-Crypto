@@ -663,6 +663,7 @@ class App extends Component {
       account: '',
       value: '',
       txHash: '',
+			transError: false,
       showGame: false,
       showInstr: false,
       phase: 0,
@@ -819,7 +820,7 @@ class App extends Component {
     const newHistoryData = this.state.historyData.concat(createHistoryData(id, newDate + ' ' + newTime, outcome, status, fee, profit))
     const newChartData = this.state.chartData.concat(createChartData(newTime, this.state.profit + profit))
     this.setState({
-       profit: this.state.profit + profit,   
+			profit: this.state.profit + profit,   
       historyData: newHistoryData,
       chartData: newChartData,
     });
@@ -843,6 +844,7 @@ class App extends Component {
 		this.setState({
 			slowReelCounter: -1,
 			txHash: '',
+			transError: false,
 			gameResult: null,
 		})
     contract.methods.playerBet().send({
@@ -850,6 +852,9 @@ class App extends Component {
       value: this.state.value
     })
     .on('error', () => {
+			this.setState({
+				transError: true,
+			})
       this.setPhase(null, 2)
       console.log("Transaction failed.");
     })
@@ -896,6 +901,7 @@ class App extends Component {
 			callback()
 			this.setState({
 				backdrop: false,
+				startDate: new Date(this.state.historyData[0].date),
 			})
 		})
 	}
@@ -953,7 +959,7 @@ class App extends Component {
           {(this.state.txHash && this.state.phase === 2) &&
             <SnackbarDisplay severity="success" duration={8000} msg={"Transaction mined at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
           }
-          {(!this.state.txHash && this.state.phase === 2) &&
+          {(this.state.transError && this.state.phase === 2) &&
             <SnackbarDisplay severity="error" duration={6000} msg="Transaction failed."/>
           }
 					{/* Backdrop */}
