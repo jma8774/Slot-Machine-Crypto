@@ -13,14 +13,13 @@ const greenTheme = createMuiTheme({
 });
 
 function Chart({data}) {
-  // var reversedData = [...data].reverse()
   return (
     <Container>
       <Box pt={2} pb={1}>
         <Typography component="h1" variant="h6" color="primary">
           <Box fontWeight="fontWeightBold">Chart</Box>
           <Typography component="div" variant="subtitle2" color="textSecondary">
-            Winnings over time
+            Change in balance across {data.length} games
           </Typography>
         </Typography>
       </Box>

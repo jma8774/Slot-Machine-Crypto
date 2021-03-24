@@ -14,7 +14,16 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Chip from '@material-ui/core/Chip';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
+import Tooltip from '@material-ui/core/Tooltip';
+import SearchIcon from '@material-ui/icons/Search';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+
+const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','7️⃣']
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +45,76 @@ const greenRedTheme = createMuiTheme({
     secondary: { main: '#f44336'},
   },
 });
+
+function TablePaginationActions(props) {
+  const classes = useStyles();
+  const { count, page, rowsPerPage, onChangePage } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onChangePage(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onChangePage(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onChangePage(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <div className={classes.root}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {<FirstPageIcon />}
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {<KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {<KeyboardArrowRight />}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {<LastPageIcon />}
+      </IconButton>
+    </div>
+  );
+}
+
+function formatGrid(grid) {
+  var emojiStr = []
+  grid.forEach(row => {
+    var tmp = ''
+    row.forEach(emojiIdx => {
+      tmp += emojis[emojiIdx]
+    })
+    emojiStr.push(tmp)
+  })
+  return (
+    <Typography variant="h6" align="justify">
+      {emojiStr[0]}
+      <br/>
+      {emojiStr[1]}
+      <br/>
+      {emojiStr[2]}
+    </Typography>
+  )
+}
 
 function History({rows, page, setPage}) {
   const classes = useStyles();
@@ -66,6 +145,7 @@ function History({rows, page, setPage}) {
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
+              <TableCell>Grid</TableCell>
               <TableCell>Winning Outcome</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Fee</TableCell>
@@ -80,6 +160,11 @@ function History({rows, page, setPage}) {
               ).map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.date}</TableCell>
+                  <TableCell>
+                    <Tooltip arrow={true} placement="top" title={formatGrid(row.grid)}>
+                        <SearchIcon/>
+                    </Tooltip>
+                  </TableCell>
                   <TableCell>{row.outcome}</TableCell>
                   <TableCell>
                     <Chip
@@ -114,6 +199,7 @@ function History({rows, page, setPage}) {
                   rowsPerPage={rowsPerPage}
                   onChangePage={handleChangePage}
                   onChangeRowsPerPage={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
                 />
               </TableRow>
             </TableFooter>

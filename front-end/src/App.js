@@ -26,7 +26,7 @@ import Stats from './Stats';
 
 const Web3 = require('web3')
 const metaNet = new Web3(window.web3.currentProvider);
-const contract_addr = '0xb60a6B392EBF38DF17B4a97765Da677C79E21C25'
+const contract_addr = '0x80aCD4a9043B46A29d8A7E0F13dDc11A3d0a63DE'
 const contract_abi = [
 	{
 		"inputs": [],
@@ -55,50 +55,6 @@ const contract_abi = [
 			}
 		],
 		"name": "FinishedGames",
-		"outputs": [
-			{
-				"internalType": "enum SlotMachine.State",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address payable",
-				"name": "playerAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "playerBetAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "time",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "prizeMoney",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "result",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "Games",
 		"outputs": [
 			{
 				"internalType": "enum SlotMachine.State",
@@ -551,14 +507,14 @@ const theme = createMuiTheme({
 // 🍇 = Marill]
 const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','7️⃣']
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
-const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
+const col2 = ['🍎','🍎','🍌','🍊','🍌','🔁','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
 const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
 const linesLookup = {
 	"top": [0, 1, 2],
 	"middle": [3, 4, 5],
 	"bottom": [6, 7, 8],
 	"majorDiagonal": [0, 4, 8],
-	"minorDiagonal": [2, 4, 6],
+	"minorDiagonal": [6, 4, 2],
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -579,7 +535,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function SnackbarDisplay({severity, msg, duration}) {
+function SnackbarDisplay({severity, msg, link, duration}) {
   const [open, setOpen] = React.useState(true);
   const handleClose = (event, reason) => {
     if(reason === "clickaway"){
@@ -590,7 +546,10 @@ function SnackbarDisplay({severity, msg, duration}) {
   return(
     <Snackbar open={open} autoHideDuration={duration} onClose={handleClose}>
       <Alert onClose={handleClose} variant="filled" severity={severity}>
-        {msg}
+			{msg}
+			{link && 
+				<a href={link} target="_blank" rel="noreferrer" style={{color: 'white'}}>{link.substring(0, 60) + '...'}</a>
+			}
       </Alert>
     </Snackbar>
   )
@@ -629,8 +588,8 @@ function createChartData(time, amount) {
   return { time, amount };
 }
 
-function createHistoryData(id, date, outcome, status, fee, profit) {
-  return { id, date, outcome, status, fee, profit };
+function createHistoryData(id, date, outcome, status, fee, profit, grid) {
+  return { id, date, outcome, status, fee, profit, grid};
 }
 
 function epochToDate(epoch) {
@@ -711,6 +670,8 @@ class App extends Component {
 	}
 
   setPhase(e, phase) {
+		if(this.state.phase === phase)
+			return
     this.setState({
       phase: phase,
     })
@@ -718,9 +679,9 @@ class App extends Component {
     // Waiting Phase
     if(phase === 0) {
       console.log("Phase 0")
+      clearInterval(this.phase0Timer);
 			clearInterval(this.slotTimer);
       clearInterval(this.slowReelTimer);
-      clearInterval(this.phase0Timer);
       clearInterval(this.checkContractTimer);
     } 
     // Loading Phase
@@ -738,7 +699,11 @@ class App extends Component {
     // Update Result Phase
     else if(phase === 2) {
       console.log("Phase 2")
-      this.phase0Timer = setInterval((e) => this.setPhase(e, 0), 3000);
+      this.phase0Timer = setInterval((e) => {
+				clearInterval(this.phase0Timer);
+				this.setPhase(e, 0)
+			}
+			, 3000);
     }
   }
 
@@ -772,11 +737,13 @@ class App extends Component {
 			selectedCol = col2
 		else if(idx === 2)
 			selectedCol = col3
+
 		const need = [grid[0][idx], grid[1][idx], grid[2][idx]].map((res) => emojis[res])
 		for(var i=0; i<selectedCol.length; i++) {
 			const [x0, x1, x2] = [selectedCol[i], selectedCol[(i+1)%selectedCol.length], selectedCol[(i+2)%selectedCol.length]]
-			if(x0 === need[0] && x1 === need[1] && x2 === need[2])
+			if(x0 === need[0] && x1 === need[1] && x2 === need[2]) {
 				return i
+			}
 		}
 		return 0
 	}
@@ -817,7 +784,7 @@ class App extends Component {
     const fee = game[2]
     const profit = game[5] - fee
     const status = profit < 0 ? "Lose" : "Win"
-    const newHistoryData = this.state.historyData.concat(createHistoryData(id, newDate + ' ' + newTime, outcome, status, fee, profit))
+    const newHistoryData = this.state.historyData.concat(createHistoryData(id, newDate + ' ' + newTime, outcome, status, fee, profit, game[4]))
     const newChartData = this.state.chartData.concat(createChartData(newTime, this.state.profit + profit))
     this.setState({
 			profit: this.state.profit + profit,   
@@ -841,6 +808,8 @@ class App extends Component {
   playerBet() {
     if(!this.state.hasMetaMask)
       return
+		clearInterval(this.phase0Timer);
+		
 		this.setState({
 			slowReelCounter: -1,
 			txHash: '',
@@ -855,7 +824,7 @@ class App extends Component {
 			this.setState({
 				transError: true,
 			})
-      this.setPhase(null, 2)
+			this.setPhase(null, 2)
       console.log("Transaction failed.");
     })
     .then(receipt => {
@@ -901,7 +870,7 @@ class App extends Component {
 			callback()
 			this.setState({
 				backdrop: false,
-				startDate: new Date(this.state.historyData[0].date),
+				startDate: this.state.historyData.length === 0 ? new Date() : new Date(this.state.historyData[0].date),
 			})
 		})
 	}
@@ -956,11 +925,11 @@ class App extends Component {
           {!this.state.hasMetaMask &&
             <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and set it up."/>
           }
-          {(this.state.txHash && this.state.phase === 2) &&
-            <SnackbarDisplay severity="success" duration={8000} msg={"Transaction mined at https://kovan.etherscan.io/tx/" + this.state.txHash}/>
+          {this.state.txHash &&
+            <SnackbarDisplay severity="success" duration={7000} msg={"Transaction mined at: \n"} link={"https://kovan.etherscan.io/tx/" + this.state.txHash}/>
           }
-          {(this.state.transError && this.state.phase === 2) &&
-            <SnackbarDisplay severity="error" duration={6000} msg="Transaction failed."/>
+          {this.state.transError &&
+            <SnackbarDisplay severity="error" duration={5000} msg="Transaction failed."/>
           }
 					{/* Backdrop */}
 					<Backdrop className={classes.backdrop} open={this.state.backdrop}>

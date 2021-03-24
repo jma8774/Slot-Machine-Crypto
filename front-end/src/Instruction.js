@@ -33,7 +33,37 @@ const useStyles = makeStyles((theme) => ({
   steps: {
     marginTop: theme.spacing(2),
   },
+  primary: {
+    color: theme.palette.primary.main
+  },
+  secondary: {
+    color: theme.palette.secondary.main
+  },
+  green: {
+    color: theme.palette.success.main
+  },
 }));
+
+function Primary({txt}) {
+  const classes = useStyles();
+  return (
+    <span className={classes.primary}>{txt}</span>
+  )
+}
+
+function Secondary({txt}) {
+  const classes = useStyles();
+  return (
+    <span className={classes.secondary}>{txt}</span>
+  )
+}
+
+function Green({txt}) {
+  const classes = useStyles();
+  return (
+    <span className={classes.green}>{txt}</span>
+  )
+}
 
 function Instruction({showInstr}) {
   const classes = useStyles();
@@ -154,23 +184,41 @@ function Instruction({showInstr}) {
               </Box>
               <Divider variant="middle" light/>
               <Box component={Container}>
+                <Typography component='div' variant="h5" color="textPrimary" className={classes.steps}>
+                  Game Rules
+                  <Typography variant="subtitle1" color="textSecondary">
+                    Betting <span className={classes.secondary}>1 Wei</span> will allow you to win from the <Secondary txt="middle"/> row. <br/>
+                    Betting <span className={classes.primary}>2 Wei</span> will allow you to win from the <Primary txt="top"/>, <Secondary txt="middle"/>, and <Primary txt="bottom"/> rows. <br/>
+                    Betting <span className={classes.green}>3 Wei</span> will allow you to win from the <Primary txt="top"/>, <Secondary txt="middle"/>, <Primary txt="bottom"/> and <Green txt="diagonal"/> rows. <br/>
+                  </Typography>
+                  <img alt="Step 1 Game" src={process.env.PUBLIC_URL + "/game_wei.png"}/>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    Winning Combinations here:
+                  </Typography>
+                </Typography>
+                <Typography component='div' variant="h5" color="textPrimary" className={classes.steps}>
+                  How to Play
+                </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 1
                   <Typography variant="subtitle1" color="textSecondary">
-                    You do this first.
+                    Enter the values 1, 2 or 3 for the amount of Wei that you want to bet and press start.
                   </Typography>
+                  <img alt="Step 1 Game" src={process.env.PUBLIC_URL + "/game_1.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 2
                   <Typography variant="subtitle1" color="textSecondary">
-                    You do this second.
+                    When prompted, press confirm.
                   </Typography>
+                  <img alt="Step 2 Game" src={process.env.PUBLIC_URL + "/game_2.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 3
                   <Typography variant="subtitle1" color="textSecondary">
-                    You do this third.
+                    Results will be shown shown after the transation has been mined.
                   </Typography>
+                  <img alt="Step 3 Game" src={process.env.PUBLIC_URL + "/game_3.png"}/>
                 </Typography>
               </Box>
             </React.Fragment>
