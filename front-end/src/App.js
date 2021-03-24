@@ -650,8 +650,8 @@ function parseOutcome(game) {
 		})
     newString += '/'
   })
-	// console.log("Winning lines:", rows)
-  // console.log("Winning outcomes:", newString.substring(0, newString.length-1))
+	console.log("Winning lines:", rows)
+  console.log("Winning outcomes:", newString.substring(0, newString.length-1))
   return newString.substring(0, newString.length-1)
 }
 class App extends Component {
@@ -807,7 +807,7 @@ class App extends Component {
 	// 7: result
 	// Input a game to update Stats
   updateStats(game) {
-    // console.log("Update tick", game)
+    console.log("Update tick", game)
     const id = this.state.historyData.length
     const date = epochToDate(game[3])
     const newDate = date.toLocaleDateString("en-US")
@@ -841,7 +841,6 @@ class App extends Component {
     if(!this.state.hasMetaMask)
       return
 		this.setState({
-			slowReelCol: -1,
 			slowReelCounter: -1,
 			txHash: '',
 			gameResult: null,

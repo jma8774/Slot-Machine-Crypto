@@ -139,7 +139,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
     emojiDisplay.map((value, idx) => (
       <Grid item key={idx} xs={4} md={4} lg={4}>
         <Box boxShadow={3}>
-          <Paper className={(greenBoxes.has(idx) ? classes.game_paper_green : classes.game_paper)}>
+          <Paper className={(greenBoxes.has(idx) && slowReelCounter>=15 ? classes.game_paper_green : classes.game_paper)}>
             {/* 1, 2, 3 indicators spawn */}
             {idx === 0 &&
               <span>

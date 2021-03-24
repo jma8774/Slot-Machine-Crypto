@@ -40,7 +40,7 @@ function Chart({data}) {
               position="left"
               style={{ textAnchor: 'middle', fill: greenTheme.palette.text.primary }}
             >
-              Earnings (ETH)
+              Earnings (Wei)
             </Label>
           </YAxis>
           <Line type="monotone" dataKey="amount" stroke={greenTheme.palette.primary.main} dot={false} />
