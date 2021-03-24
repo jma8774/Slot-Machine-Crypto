@@ -22,6 +22,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🍊','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
 const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
+const linesLookup = {
+	"top": [0, 1, 2],
+	"middle": [3, 4, 5],
+	"bottom": [6, 7, 8],
+	"majorDiagonal": [0, 4, 8],
+	"minorDiagonal": [2, 4, 6],
+}
 
 const greenTheme = createMuiTheme({
   palette: {
@@ -39,12 +46,24 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(5),
     textAlign: 'center',
   },
+  game_paper_green: {
+    position: "relative",
+    backgroundColor: theme.palette.success.main,
+    paddingTop: theme.spacing(5),
+    paddingBottom: theme.spacing(5),
+    textAlign: 'center',
+  },
   textField: {
     width: theme.spacing(25),
   },
   circularProgress: {
     position: "absolute",
     left: theme.spacing(1),
+  },
+  checkIcon: {
+    position: 'absolute',
+    right: theme.spacing(0),
+    top: theme.spacing(0)
   },
   rowIndicSide: {
     position: 'absolute',
@@ -87,12 +106,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function EmojiDisplay({value, idx, phase, slowReelCol}) {
+function EmojiDisplay({value, idx, phase, slowReelCounter}) {
   const classes = useStyles();
   let toRender;
   if(phase === 2) {
     toRender =
-    <Typography className={(slowReelCol>=idx%3 ? classes.slideDownEaseOut : classes.slideDownInfinite)} component="h1" variant="h2">
+    <Typography className={(Math.floor(slowReelCounter/5)>=idx%3 ? classes.slideDownEaseOut : classes.slideDownInfinite)} component="h1" variant="h2">
       {value}
     </Typography>
   } else {
@@ -106,13 +125,21 @@ function EmojiDisplay({value, idx, phase, slowReelCol}) {
   )
 }
 
-function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
+function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
   const classes = useStyles();
+  var greenBoxes = new Set()
+  if(gameResult) {
+    const winningLines = gameResult[6]
+    winningLines.forEach(ele => {
+      const indexes = linesLookup[ele]
+      indexes.forEach(i => greenBoxes.add(i))
+    })
+  }
   return(
     emojiDisplay.map((value, idx) => (
       <Grid item key={idx} xs={4} md={4} lg={4}>
         <Box boxShadow={3}>
-          <Paper className={classes.game_paper}>
+          <Paper className={(greenBoxes.has(idx) ? classes.game_paper_green : classes.game_paper)}>
             {/* 1, 2, 3 indicators spawn */}
             {idx === 0 &&
               <span>
@@ -134,7 +161,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
               </span>
             }
             {/* Emoji spawn */}
-            <EmojiDisplay value={value} idx={idx} phase={phase} slowReelCol={slowReelCol}/>
+            <EmojiDisplay value={value} idx={idx} phase={phase} slowReelCounter={slowReelCounter}/>
           </Paper>
         </Box>
       </Grid>
@@ -142,22 +169,22 @@ function SlotDisplay({emojiDisplay, phase, slowReelCol}) {
   )
 }
 
-function Game({showGame, account, setValue, value, setPhase, sendTransaction, phase, colIdx, slowReelCol}) {
+function Game({showGame, account, setValue, value, setPhase, playerBet, phase, colIdx, slowReelCounter, gameResult}) {
   const classes = useStyles();
   const col1Idx = colIdx[0];
   const col2Idx = colIdx[1];
   const col3Idx = colIdx[2];
   // I want to show them like it's a real reel in a casino, not just all random
   const emojiDisplay = [
-    col1[(col1Idx+2) % col1.length],
-    col2[(col2Idx+2) % col2.length],
-    col3[(col3Idx+2) % col3.length],
-    col1[(col1Idx+1) % col1.length],
-    col2[(col2Idx+1) % col2.length],
-    col3[(col3Idx+1) % col3.length],
     col1[col1Idx % col1.length],
     col2[col2Idx % col2.length],
     col3[col3Idx % col3.length],
+    col1[(col1Idx+1) % col1.length],
+    col2[(col2Idx+1) % col2.length],
+    col3[(col3Idx+1) % col3.length],
+    col1[(col1Idx+2) % col1.length],
+    col2[(col2Idx+2) % col2.length],
+    col3[(col3Idx+2) % col3.length],
   ]
 
   const [error, setError] = React.useState(false)
@@ -190,7 +217,7 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
       return
     }
     setPhase(e, 1);
-    sendTransaction();
+    playerBet();
     setLoading(true);
   }
 
@@ -203,7 +230,7 @@ function Game({showGame, account, setValue, value, setPhase, sendTransaction, ph
       <Box mt={10}>
         <Container maxWidth="sm">
           <Grid container justify="center" spacing={4}>
-            <SlotDisplay emojiDisplay={emojiDisplay} phase={phase} slowReelCol={slowReelCol}/>
+            <SlotDisplay emojiDisplay={emojiDisplay} phase={phase} slowReelCounter={slowReelCounter} gameResult={gameResult}/>
           </Grid>
         </Container>
         <Box mt={7} mr={3}>

@@ -17,8 +17,8 @@ function monthToString(month) {
   return months[month-1]
 }
 
-function Balance({profit, curDate}) {
-  const [month, date, year] = curDate.split("/")
+function Balance({profit, startDate}) {
+  const [month, date, year] = startDate.toLocaleDateString("en-US").split("/")
   return (
     <Container>
       <Box pt={2}>
@@ -28,11 +28,11 @@ function Balance({profit, curDate}) {
       </Box>
       <ThemeProvider theme={greenTheme}>
         <Typography component="p" variant="h5" color={profit >= 0 ? "primary" : "error"}>
-          {profit} ETH
+          {profit} Wei
         </Typography>
       </ThemeProvider>
       <Typography color="textSecondary">
-        on {monthToString(month)}   {date}, {year}
+        since {monthToString(month)} {date}, {year}
       </Typography>
     </Container>
   )

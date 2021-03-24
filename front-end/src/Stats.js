@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Stats({showGame, chartData, historyData, profit, curDate, startTime}) {
+function Stats({showGame, chartData, historyData, profit, startDate, page, setPage}) {
   const classes = useStyles();
   if(!showGame) {
     return <span></span>
@@ -54,17 +54,17 @@ function Stats({showGame, chartData, historyData, profit, curDate, startTime}) {
                 <Grid container justify="center" spacing={4}>
                   <Grid item xs={12} sm={8}>
                     <Paper className={classes.stat_paper} elevation={3}>
-                      <Chart data={chartData} curTime={startTime}/>
+                      <Chart data={chartData}/>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={4}>
                     <Paper className={classes.stat_paper} elevation={3}>
-                      <Balance profit={profit} curDate={curDate}/>
+                      <Balance profit={profit} startDate={startDate}/>
                     </Paper>
                   </Grid>
                   <Grid item xs={12} sm={12}>
                     <Paper className={classes.stat_history} elevation={3}>
-                      <History rows={historyData}/>
+                      <History rows={historyData} page={page} setPage={setPage}/>
                     </Paper>
                   </Grid>
                 </Grid>

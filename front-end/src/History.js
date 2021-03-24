@@ -37,9 +37,8 @@ const greenRedTheme = createMuiTheme({
   },
 });
 
-function History({rows}) {
+function History({rows, page, setPage}) {
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const emptyRows = rowsPerPage - (rows.length - page * rowsPerPage)
 
@@ -64,7 +63,7 @@ function History({rows}) {
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
-              <TableCell>Outcome</TableCell>
+              <TableCell>Winning Outcome</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Fee</TableCell>
               <TableCell align="right">Profit</TableCell>
@@ -89,7 +88,7 @@ function History({rows}) {
                   </TableCell>
                   <TableCell>{row.fee}</TableCell>
                   <TableCell align="right">
-                    <Typography color={row.profit > 0 ? "primary" : "secondary"}>
+                    <Typography color={row.profit < 0 ? "secondary" : "primary"}>
                       {row.profit}
                     </Typography>
                   </TableCell>

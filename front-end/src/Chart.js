@@ -12,14 +12,14 @@ const greenTheme = createMuiTheme({
   },
 });
 
-function Chart({data, curTime}) {
+function Chart({data}) {
   return (
     <Container>
       <Box pt={2} pb={1}>
         <Typography component="h1" variant="h6" color="primary">
-          <Box fontWeight="fontWeightBold">Today</Box>
+          <Box fontWeight="fontWeightBold">Chart</Box>
           <Typography component="div" variant="subtitle2" color="textSecondary">
-            Starting from {curTime}
+            Winnings over time
           </Typography>
         </Typography>
       </Box>

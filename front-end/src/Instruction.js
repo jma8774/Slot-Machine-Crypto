@@ -76,7 +76,7 @@ function Instruction({showInstr}) {
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 1
                   <Typography variant="subtitle1" color="textSecondary">
-                    Install the MetaMask extension from <Link href="https://metamask.io/download.html" target="_blank" rel="noreferrer" color="secondary">here</Link>.
+                    Install the <Link href="https://metamask.io/download.html" target="_blank" rel="noreferrer" color="secondary">MetaMask</Link> extension.
                   </Typography>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
