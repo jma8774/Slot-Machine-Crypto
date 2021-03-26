@@ -7,7 +7,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { Typography, unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { MobileView } from "react-device-detect";
+import { isMobile, MobileView } from "react-device-detect";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -24,473 +24,23 @@ import Instruction from './Instruction';
 import Game from './Game';
 import Stats from './Stats';
 
+const ContractABI = require('./ContractABI.js')
 const Web3 = require('web3')
-const metaNet = new Web3(window.web3.currentProvider);
-const contract_addr = '0x80aCD4a9043B46A29d8A7E0F13dDc11A3d0a63DE'
-const contract_abi = [
-	{
-		"inputs": [],
-		"stateMutability": "payable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			}
-		],
-		"name": "GameResult",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "FinishedGames",
-		"outputs": [
-			{
-				"internalType": "enum SlotMachine.State",
-				"name": "state",
-				"type": "uint8"
-			},
-			{
-				"internalType": "address payable",
-				"name": "playerAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "playerBetAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "time",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "prizeMoney",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "result",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "closeContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "fundCasino",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getCasinoBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getContractBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getFinishedGames",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "enum SlotMachine.State",
-						"name": "state",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address payable",
-						"name": "playerAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "playerBetAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "time",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[3][3]",
-						"name": "slotsState",
-						"type": "uint256[3][3]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "prizeMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string[]",
-						"name": "linesWon",
-						"type": "string[]"
-					},
-					{
-						"internalType": "string",
-						"name": "result",
-						"type": "string"
-					}
-				],
-				"internalType": "struct SlotMachine.Game[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getGames",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "enum SlotMachine.State",
-						"name": "state",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address payable",
-						"name": "playerAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "playerBetAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "time",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[3][3]",
-						"name": "slotsState",
-						"type": "uint256[3][3]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "prizeMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string[]",
-						"name": "linesWon",
-						"type": "string[]"
-					},
-					{
-						"internalType": "string",
-						"name": "result",
-						"type": "string"
-					}
-				],
-				"internalType": "struct SlotMachine.Game[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_address",
-				"type": "address"
-			}
-		],
-		"name": "getHistory",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "enum SlotMachine.State",
-						"name": "state",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address payable",
-						"name": "playerAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "playerBetAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "time",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[3][3]",
-						"name": "slotsState",
-						"type": "uint256[3][3]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "prizeMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string[]",
-						"name": "linesWon",
-						"type": "string[]"
-					},
-					{
-						"internalType": "string",
-						"name": "result",
-						"type": "string"
-					}
-				],
-				"internalType": "struct SlotMachine.Game[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getLinesWon",
-		"outputs": [
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getOwnerAddress",
-		"outputs": [
-			{
-				"internalType": "address payable",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getPrizeMoney",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getResults",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "enum SlotMachine.State",
-						"name": "state",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address payable",
-						"name": "playerAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "playerBetAmount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "time",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256[3][3]",
-						"name": "slotsState",
-						"type": "uint256[3][3]"
-					},
-					{
-						"internalType": "uint256",
-						"name": "prizeMoney",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string[]",
-						"name": "linesWon",
-						"type": "string[]"
-					},
-					{
-						"internalType": "string",
-						"name": "result",
-						"type": "string"
-					}
-				],
-				"internalType": "struct SlotMachine.Game",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getRow1",
-		"outputs": [
-			{
-				"internalType": "uint256[3]",
-				"name": "",
-				"type": "uint256[3]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getRow2",
-		"outputs": [
-			{
-				"internalType": "uint256[3]",
-				"name": "",
-				"type": "uint256[3]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getRow3",
-		"outputs": [
-			{
-				"internalType": "uint256[3]",
-				"name": "",
-				"type": "uint256[3]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getSlots",
-		"outputs": [
-			{
-				"internalType": "uint256[3][3]",
-				"name": "",
-				"type": "uint256[3][3]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "playerBet",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "symbolWorth",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawCasinoFunds",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-]
-const contract = new metaNet.eth.Contract(
-  contract_abi,
-  contract_addr,
-);
+var metaNet
+var contract_addr 
+var contract_abi
+var contract
+
+
+if(!isMobile) {
+	metaNet = new Web3(window.web3.currentProvider);
+	contract_addr = ContractABI.contract_addr
+	contract_abi = ContractABI.contract_abi
+	contract = new metaNet.eth.Contract(
+		contract_abi,
+		contract_addr,
+	);
+}
 
 const theme = createMuiTheme({
   palette: {
@@ -609,8 +159,8 @@ function parseOutcome(game) {
 		})
     newString += '/'
   })
-	console.log("Winning lines:", rows)
-  console.log("Winning outcomes:", newString.substring(0, newString.length-1))
+	// console.log("Winning lines:", rows)
+  // console.log("Winning outcomes:", newString.substring(0, newString.length-1))
   return newString.substring(0, newString.length-1)
 }
 class App extends Component {
@@ -619,9 +169,10 @@ class App extends Component {
     this.state = {
 			backdrop: false,
       hasMetaMask: false,
+			parsingHistory: false,
       account: '',
       value: '',
-      txHash: '',
+      receipt: '',
 			transError: false,
       showGame: false,
       showInstr: false,
@@ -634,6 +185,7 @@ class App extends Component {
       slowReelCounter: -1,
       chartData: [createChartData(new Date().toLocaleTimeString("en-US"), 0)],
       historyData: [],
+      numWins: 0,
 			page: 0,
       startDate: new Date(),
     };
@@ -672,6 +224,7 @@ class App extends Component {
   setPhase(e, phase) {
 		if(this.state.phase === phase)
 			return
+
     this.setState({
       phase: phase,
     })
@@ -703,7 +256,7 @@ class App extends Component {
 				clearInterval(this.phase0Timer);
 				this.setPhase(e, 0)
 			}
-			, 3000);
+			, 2000);
     }
   }
 
@@ -775,7 +328,7 @@ class App extends Component {
 	// 7: result
 	// Input a game to update Stats
   updateStats(game) {
-    console.log("Update tick", game)
+    // console.log("Update tick", game)
     const id = this.state.historyData.length
     const date = epochToDate(game[3])
     const newDate = date.toLocaleDateString("en-US")
@@ -790,6 +343,7 @@ class App extends Component {
 			profit: this.state.profit + profit,   
       historyData: newHistoryData,
       chartData: newChartData,
+      numWins: status === "Win" ? this.state.numWins + 1 : this.state.numWins
     });
   }
 
@@ -812,7 +366,7 @@ class App extends Component {
 		
 		this.setState({
 			slowReelCounter: -1,
-			txHash: '',
+			receipt: '',
 			transError: false,
 			gameResult: null,
 		})
@@ -830,7 +384,7 @@ class App extends Component {
     .then(receipt => {
       console.log("Transaction mined: Block is located at https://kovan.etherscan.io/tx/" + receipt.transactionHash)
       this.setState({
-        txHash: receipt.transactionHash,
+        receipt: receipt,
       })
     })
   }
@@ -853,12 +407,16 @@ class App extends Component {
 
 	// Get past games and parse to history
 	parseHistory(callback) {
+		if(this.state.parsingHistory)
+			return
 		this.setState({
 			chartData: [createChartData(new Date().toLocaleTimeString("en-US"), 0)],
       historyData: [],
 			profit: 0,
+      numWins: 0,
 			backdrop: true,
 			page: 0,
+			parsingHistory: true,
 		})
 		contract.methods.getFinishedGames().call()
 		.then(res => {
@@ -871,6 +429,7 @@ class App extends Component {
 			this.setState({
 				backdrop: false,
 				startDate: this.state.historyData.length === 0 ? new Date() : new Date(this.state.historyData[0].date),
+				parsingHistory: false,
 			})
 		})
 	}
@@ -917,16 +476,19 @@ class App extends Component {
           </MobileView>
           {/* Update Snackbars for various things */}
           {(this.state.hasMetaMask && !this.state.account) &&
-            <SnackbarDisplay severity="error" duration={2000} msg="Please login to MetaMask."/>
+            <SnackbarDisplay severity="error" duration={3000} msg="Please login to MetaMask."/>
             }
           {(this.state.hasMetaMask && this.state.account) &&
-            <SnackbarDisplay severity="success" duration={2000} msg="MetaMask is ready to go!"/>
+            <SnackbarDisplay severity="success" duration={3000} msg="MetaMask is ready to go!"/>
           }
           {!this.state.hasMetaMask &&
             <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and set it up."/>
           }
-          {this.state.txHash &&
-            <SnackbarDisplay severity="success" duration={7000} msg={"Transaction mined at: \n"} link={"https://kovan.etherscan.io/tx/" + this.state.txHash}/>
+					{(this.state.phase === 1 && this.state.receipt && this.state.receipt.from.toUpperCase() !== this.state.account.toUpperCase()) &&
+						<SnackbarDisplay severity="error" duration={10000} msg="Please switch back to your other MetaMask account to see the results."/>
+					}
+          {(this.state.receipt && this.state.receipt.from.toUpperCase() === this.state.account.toUpperCase()) &&
+            <SnackbarDisplay severity="success" duration={7000} msg={"Transaction mined at: \n"} link={"https://kovan.etherscan.io/tx/" + this.state.receipt.transactionHash}/>
           }
           {this.state.transError &&
             <SnackbarDisplay severity="error" duration={5000} msg="Transaction failed."/>
@@ -974,6 +536,7 @@ class App extends Component {
               chartData={this.state.chartData}
               historyData={this.state.historyData}
               profit={this.state.profit}
+              numWins={this.state.numWins}
               startDate={this.state.startDate}
 							page={this.state.page}
 							setPage={this.setPage}

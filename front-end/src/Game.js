@@ -1,4 +1,5 @@
 import React from 'react';
+import { isMobile } from "react-device-detect";
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -18,6 +19,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import ErrorIcon from '@material-ui/icons/Error';
 import Tooltip from '@material-ui/core/Tooltip';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
 const col2 = ['🍎','🍎','🍌','🍊','🍌','🔁','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
@@ -55,6 +57,9 @@ const useStyles = makeStyles((theme) => ({
   },
   textField: {
     width: theme.spacing(25),
+  },
+  tooltipWidth: {
+    maxWidth: 180
   },
   circularProgress: {
     position: "absolute",
@@ -139,7 +144,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
     emojiDisplay.map((value, idx) => (
       <Grid item key={idx} xs={4} md={4} lg={4}>
         <Box boxShadow={3}>
-          <Paper className={(greenBoxes.has(idx) && slowReelCounter>=15 ? classes.game_paper_green : classes.game_paper)}>
+          <Paper className={(greenBoxes.has(idx) && phase === 0 ? classes.game_paper_green : classes.game_paper)}>
             {/* 1, 2, 3 indicators spawn */}
             {idx === 0 &&
               <span>
@@ -166,6 +171,41 @@ function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
         </Box>
       </Grid>
     ))
+  )
+}
+
+function HelpTitle() {
+  const help = [
+    ['🍒❓❓', '2 Wei'], 
+    ['🍒🍒❓', '4 Wei'], 
+    ['🍒🍒🍒', '6 Wei'], 
+    ['🍎🍎🍎', '3 Wei'], 
+    ['🍌🍌🍌', '6 Wei'], 
+    ['🍇🍇🍇', '12 Wei'], 
+    ['🍊🍊🍊', '100 Wei'], 
+    ['7️⃣7️⃣7️⃣', '300 Wei'], 
+    ['🔁🔁🔁', 'Refund']
+  ]
+  return (
+    <Box>
+      <Grid container direction="row">
+        {help.map(val => (
+          <React.Fragment>
+            <Grid item xs={6} sm={6} md={6} lg={6}>
+              <Typography>
+                {val[0]}
+              </Typography>
+            </Grid>
+            <Grid item xs={6} sm={6} md={6} lg={6}>
+              <Typography variant="caption">
+                {val[1]}
+              </Typography>
+            </Grid>
+          </React.Fragment>
+        ))
+        }
+      </Grid>
+    </Box>
   )
 }
 
@@ -235,6 +275,11 @@ function Game({showGame, account, setValue, value, setPhase, playerBet, phase, c
         </Container>
         <Box mt={7} mr={3}>
           <Grid container justify="center" spacing={2}>
+          < Grid item style={{position: "relative", top: 6}}>
+              <Tooltip placement="top" arrow={true} title={<HelpTitle/>} classes={{tooltip: classes.tooltipWidth}}>
+                <HelpOutlineIcon/>
+              </Tooltip>
+            </Grid>
             <Grid item style={{position: "relative"}} className={classes.textField}>
               <Tooltip placement="top" arrow={true} title={"1 Ether is equivalent to 1,000,000,000,000,000,000 (1e18) Wei "}>
                 <TextField 
@@ -267,16 +312,16 @@ function Game({showGame, account, setValue, value, setPhase, playerBet, phase, c
               </Tooltip>
             </Grid>
             <Grid item>
-              <Button disabled={phase !== 0} variant="contained" color="primary" onClick={(e) => handleStart(e)} endIcon={<SendIcon/>} >
+              <Button disabled={phase !== 0 || isMobile} variant="contained" color="primary" onClick={(e) => handleStart(e)} endIcon={<SendIcon/>} >
                 Start 
               </Button>
             </Grid>
-              <Grid item style={{position: "relative"}}>
-              {phase === 1
-                ?<CircularProgress className={classes.circularProgress}/>
-                : <span></span>
-              }
-              </Grid>
+            <Grid item style={{position: "relative"}}>
+            {phase === 1
+              ?<CircularProgress className={classes.circularProgress}/>
+              : <span></span>
+            }
+            </Grid>
           </Grid>
         </Box>
       </Box>

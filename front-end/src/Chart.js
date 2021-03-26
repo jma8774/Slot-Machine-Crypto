@@ -19,11 +19,11 @@ function Chart({data}) {
         <Typography component="h1" variant="h6" color="primary">
           <Box fontWeight="fontWeightBold">Chart</Box>
           <Typography component="div" variant="subtitle2" color="textSecondary">
-            Change in balance across {data.length} games
+            Change in balance across {data.length-1} {data.length-1 > 1 ? 'games' : 'game'}
           </Typography>
         </Typography>
       </Box>
-      <ResponsiveContainer width="99%" aspect={3}>
+      <ResponsiveContainer width="100%" height={185} >
         <LineChart
           data={data}
           margin={{

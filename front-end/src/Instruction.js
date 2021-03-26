@@ -11,6 +11,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import Divider from '@material-ui/core/Divider';
 import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   instruction_container: {
@@ -20,8 +23,13 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
     maxWidth: 960,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
+      maxWidth: theme.breakpoints.values.sm,
       borderRadius: 0,
+    },
+    [theme.breakpoints.up('md')]: {
+      maxWidth: theme.breakpoints.values.md - theme.spacing(15),
+      borderRadiius: 0,
     },
   },
   titleAlignLeft: {
@@ -29,6 +37,18 @@ const useStyles = makeStyles((theme) => ({
     left: theme.spacing(3),
     bottom: theme.spacing(4),
 
+  },
+  picture: {
+    height: "auto",
+    [theme.breakpoints.down('md')]: {
+      width: "100%",
+    },
+    [theme.breakpoints.up('md')]: {
+      width: "60%",
+    },
+  },
+  paperColor: {
+    backgroundColor: theme.palette.background.paper,
   },
   steps: {
     marginTop: theme.spacing(2),
@@ -67,8 +87,11 @@ function Green({txt}) {
 
 function Instruction({showInstr}) {
   const classes = useStyles();
+  const theme = useTheme();
+  const md = useMediaQuery(theme.breakpoints.down('md'));
   const [showMetaMask, setMetaMask] = useState(false);
   const [showGameInstr, setGameInstr] = useState(false);
+
   if(!showInstr) {
     return <span></span>
   }
@@ -114,21 +137,21 @@ function Instruction({showInstr}) {
                   <Typography variant="subtitle1" color="textSecondary">
                     After installing, in the new pop up window, click "Create a Wallet".
                   </Typography>
-                  <img alt="Step 2 MetaMask" src={process.env.PUBLIC_URL + "/metamask_2.png"}/>
+                  <img alt="Step 2 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_2.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 3
                   <Typography variant="subtitle1" color="textSecondary">
                     Secret Backup Phrase should be saved in case you lose your account.
                   </Typography>
-                  <img alt="Step 3 MetaMask" src={process.env.PUBLIC_URL + "/metamask_3.png"}/>
+                  <img alt="Step 3 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_3.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 4
                   <Typography variant="subtitle1" color="textSecondary">
                     Click on the MetaMask extension located at the top right and switch from the Ethereum Mainnet to the Kovan Test Network. 
                   </Typography>
-                  <img alt="Step 4 MetaMask" src={process.env.PUBLIC_URL + "/metamask_4.png"}/>
+                  <img alt="Step 4 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_4.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 5
@@ -136,21 +159,24 @@ function Instruction({showInstr}) {
                     To get testing Ether, we head to the <Link href="https://gitter.im/kovan-testnet/faucet" target="_blank" rel="noreferrer" color="secondary">faucet</Link>. 
                     Then, copy the account address and paste it into the faucet chatroom. (It can take up to a minute or more to receive your 6 Ether)
                   </Typography>
-                  <img alt="Step 5 MetaMask" src={process.env.PUBLIC_URL + "/metamask_5.png"}/>
+                  <img alt="Step 5 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_5.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 6
                   <Typography variant="subtitle1" color="textSecondary">
-                    Refresh the website and if prompted, connect your Etherum wallet to this website.
+                    Refresh the website and if prompted, connect your Etherum wallet to this website. *
                   </Typography>
-                  <img alt="Step 6 MetaMask" src={process.env.PUBLIC_URL + "/metamask_6.png"}/>
+                  <Typography variant="caption" color="textSecondary">
+                    * ⚠️ MetaMask will default to your first account if your current account is not selected.
+                  </Typography>
+                  <img alt="Step 6 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_6.png"}/>
                 </Typography>
                 <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
                   Step 7
                   <Typography variant="subtitle1" color="textSecondary">
                     Refresh the website and you should receieve a success message.
                   </Typography>
-                  <img alt="Step 7 MetaMask" src={process.env.PUBLIC_URL + "/metamask_7.png"}/>
+                  <img alt="Step 7 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_7.png"}/>
                 </Typography>
               </Box>
             </React.Fragment>
@@ -191,34 +217,67 @@ function Instruction({showInstr}) {
                     Betting <span className={classes.primary}>2 Wei</span> will allow you to win from the <Primary txt="top"/>, <Secondary txt="middle"/>, and <Primary txt="bottom"/> rows. <br/>
                     Betting <span className={classes.green}>3 Wei</span> will allow you to win from the <Primary txt="top"/>, <Secondary txt="middle"/>, <Primary txt="bottom"/> and <Green txt="diagonal"/> rows. <br/>
                   </Typography>
-                  <img alt="Step 1 Game" src={process.env.PUBLIC_URL + "/game_wei.png"}/>
-                  <Typography variant="subtitle1" color="textSecondary">
-                    Winning Combinations here:
+                  <img alt="Step 1 Game" className={classes.picture} src={process.env.PUBLIC_URL + "/game_wei.png"}/>
+                  <Typography component='div' variant="h5" color="textPrimary" className={classes.steps}>
+                    Winning Combinations *
+                  </Typography>
+                  <Box width={md ? "100%" : "60%"} mt={1}>
+                    <Grid container>
+                      {
+                      [
+                        ['🍒❓❓', '2 Wei'], 
+                        ['🍒🍒❓', '4 Wei'], 
+                        ['🍒🍒🍒', '6 Wei'], 
+                        ['🍎🍎🍎', '3 Wei'], 
+                        ['🍌🍌🍌', '6 Wei'], 
+                        ['🍇🍇🍇', '12 Wei'], 
+                        ['🍊🍊🍊', '100 Wei'], 
+                        ['7️⃣7️⃣7️⃣', '300 Wei'], 
+                        ['🔁🔁🔁', 'Refund if no other winning combinations']
+                      ].map((val) => (
+                        <React.Fragment>
+                          <Grid item xs={3} sm={3} md={3} lg={3}> 
+                            <Typography>
+                              {val[0]}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={9} sm={9} md={9} lg={9}> 
+                            <Typography color="textSecondary">
+                              {val[1]}
+                            </Typography>
+                          </Grid>
+                        </React.Fragment>
+                      ))
+                      }
+                    </Grid>
+                  </Box>
+                  <Typography variant="caption" color="textSecondary">
+                    * Combinations applies to all rows that you paid for (2 rows of 7️⃣7️⃣7️⃣ = 600 Wei)
                   </Typography>
                 </Typography>
                 <Typography component='div' variant="h5" color="textPrimary" className={classes.steps}>
                   How to Play
                 </Typography>
-                <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
+                <Typography component='div' variant="h6" color="textPrimary">
                   Step 1
                   <Typography variant="subtitle1" color="textSecondary">
                     Enter the values 1, 2 or 3 for the amount of Wei that you want to bet and press start.
                   </Typography>
-                  <img alt="Step 1 Game" src={process.env.PUBLIC_URL + "/game_1.png"}/>
+                  <img alt="Step 1 Game" className={classes.picture} src={process.env.PUBLIC_URL + "/game_1.png"}/>
                 </Typography>
-                <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
+                <Typography component='div' variant="h6" color="textPrimary">
                   Step 2
                   <Typography variant="subtitle1" color="textSecondary">
-                    When prompted, press confirm.
+                    When prompted by MetaMask, press confirm.
                   </Typography>
-                  <img alt="Step 2 Game" src={process.env.PUBLIC_URL + "/game_2.png"}/>
+                  <img alt="Step 2 Game" className={classes.picture} src={process.env.PUBLIC_URL + "/game_2.png"}/>
                 </Typography>
-                <Typography component='div' variant="h6" color="textPrimary" className={classes.steps}>
+                <Typography component='div' variant="h6" color="textPrimary">
                   Step 3
                   <Typography variant="subtitle1" color="textSecondary">
-                    Results will be shown shown after the transation has been mined.
+                    Results will be displayed on the website after the transation has been mined.
                   </Typography>
-                  <img alt="Step 3 Game" src={process.env.PUBLIC_URL + "/game_3.png"}/>
+                  <img alt="Step 3 Game" className={classes.picture} src={process.env.PUBLIC_URL + "/game_3.png"}/>
                 </Typography>
               </Box>
             </React.Fragment>

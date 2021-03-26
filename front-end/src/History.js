@@ -22,6 +22,8 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','7️⃣']
 
@@ -120,6 +122,8 @@ function History({rows, page, setPage}) {
   const classes = useStyles();
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const emptyRows = rowsPerPage - (rows.length - page * rowsPerPage)
+  const theme = useTheme();
+  const xs = useMediaQuery(theme.breakpoints.down('xs'));
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -148,7 +152,7 @@ function History({rows, page, setPage}) {
               <TableCell>Grid</TableCell>
               <TableCell>Winning Outcome</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Fee</TableCell>
+              {!xs && <TableCell>Fee</TableCell>}
               <TableCell align="right">Profit</TableCell>
             </TableRow>
           </TableHead>
@@ -174,7 +178,7 @@ function History({rows, page, setPage}) {
                         variant="outlined"
                     />
                   </TableCell>
-                  <TableCell>{row.fee}</TableCell>
+                  {!xs && <TableCell>{row.fee}</TableCell>}
                   <TableCell align="right">
                     <Typography color={row.profit < 0 ? "secondary" : "primary"}>
                       {row.profit}
