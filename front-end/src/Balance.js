@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     left: -theme.spacing(5),
     top: -theme.spacing(5),
+    [theme.breakpoints.down('xs')]: {
+      left: -theme.spacing(2),
+    },
   }
 }));
 
