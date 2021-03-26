@@ -167,7 +167,7 @@ function Instruction({showInstr}) {
                     Refresh the website and if prompted, connect your Etherum wallet to this website. *
                   </Typography>
                   <Typography variant="caption" color="textSecondary">
-                    * ⚠️ MetaMask will default to your first account if your current account is not selected.
+                    * ⚠️ MetaMask will default to your first account if your current account is not connected.
                   </Typography>
                   <img alt="Step 6 MetaMask" className={classes.picture} src={process.env.PUBLIC_URL + "/metamask_6.png"}/>
                 </Typography>
@@ -252,7 +252,7 @@ function Instruction({showInstr}) {
                     </Grid>
                   </Box>
                   <Typography variant="caption" color="textSecondary">
-                    * Combinations applies to all rows that you paid for (2 rows of 7️⃣7️⃣7️⃣ = 600 Wei)
+                    * Combinations applies to all rows that you paid for (Example: 2 rows of 7️⃣7️⃣7️⃣ = 600 Wei)
                   </Typography>
                 </Typography>
                 <Typography component='div' variant="h5" color="textPrimary" className={classes.steps}>

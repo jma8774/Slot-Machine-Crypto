@@ -10,7 +10,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 const useStyles = makeStyles((theme) => ({
   pieStyle: {
     position: "relative",
-    left: -theme.spacing(5),
+    left: -theme.spacing(4),
     top: -theme.spacing(5),
     [theme.breakpoints.down('xs')]: {
       left: -theme.spacing(2),
@@ -84,8 +84,8 @@ function Balance({profit, winRate, startDate}) {
   const data = percentWin === 0
     ? [{ name: "No Games", value: 100 }]
     : [
-        {name: "Win Rate", value: percentWin},
-        {name: "Lose Rate", value: 100-percentWin}
+        {name: "Win", value: percentWin},
+        {name: "Lose", value: 100-percentWin}
       ]
   const onPieEnter = (_, index) => {
     setIndex(index)

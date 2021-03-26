@@ -189,8 +189,8 @@ function HelpTitle() {
   return (
     <Box>
       <Grid container direction="row">
-        {help.map(val => (
-          <React.Fragment>
+        {help.map((val, i) => (
+          <React.Fragment key={i}>
             <Grid item xs={6} sm={6} md={6} lg={6}>
               <Typography>
                 {val[0]}

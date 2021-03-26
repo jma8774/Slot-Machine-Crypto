@@ -169,6 +169,7 @@ class App extends Component {
     this.state = {
 			backdrop: false,
       hasMetaMask: false,
+      wrongNetwork: false,
 			parsingHistory: false,
       account: '',
       value: '',
@@ -333,6 +334,9 @@ class App extends Component {
     const date = epochToDate(game[3])
     const newDate = date.toLocaleDateString("en-US")
     const newTime = date.toLocaleTimeString("en-US")
+    // Overlap problem when user switches back and forth between accounts (troll)
+    if(id > 0 && this.state.historyData[id-1].date === newDate + ' ' + newTime)
+      return
     var outcome = parseOutcome(game)
     const fee = game[2]
     const profit = game[5] - fee
@@ -349,6 +353,16 @@ class App extends Component {
 
   // Get the address of the MetaMask when website loads
   async getAccount() {
+    // Chain ID 42 = Kovan Test Network
+    const chain = await window.ethereum.request({ method: 'net_version' })
+    if(parseInt(chain) !== 42) {
+      this.setState({
+        account: '',
+        wrongNetwork: true,
+      })
+      return
+    }
+
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 		const curAcc = accounts[0]
     this.setState({
@@ -363,7 +377,6 @@ class App extends Component {
     if(!this.state.hasMetaMask)
       return
 		clearInterval(this.phase0Timer);
-		
 		this.setState({
 			slowReelCounter: -1,
 			receipt: '',
@@ -391,7 +404,15 @@ class App extends Component {
 
   // Automatically detects change to account in MetaMask
   async onAccountChange() {
-    await window.ethereum.on('accountsChanged', (accounts) => {
+    const chain = await window.ethereum.request({ method: 'net_version' })
+    if(parseInt(chain) !== 42) {
+      this.setState({
+        account: '',
+        wrongNetwork: true,
+      })
+      return
+    }
+    window.ethereum.on('accountsChanged', (accounts) => {
       if(accounts.length === 0)
         return
       this.setState({
@@ -404,6 +425,11 @@ class App extends Component {
     });
   }
 
+  async onChainChange() {
+    window.ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    });
+  }
 
 	// Get past games and parse to history
 	parseHistory(callback) {
@@ -453,6 +479,7 @@ class App extends Component {
       })
       this.getAccount()
       this.onAccountChange()
+      this.onChainChange()
 
     } else {
       console.log('MetaMask is not installed!');
@@ -476,13 +503,16 @@ class App extends Component {
           </MobileView>
           {/* Update Snackbars for various things */}
           {(this.state.hasMetaMask && !this.state.account) &&
-            <SnackbarDisplay severity="error" duration={3000} msg="Please login to MetaMask."/>
-            }
+            <SnackbarDisplay severity="error" duration={3500} msg="Please login to MetaMask."/>
+          }
+          {this.state.wrongNetwork &&
+            <SnackbarDisplay severity="error" duration={3500} msg="Please connect to the Kovan Test Network."/>
+          }
           {(this.state.hasMetaMask && this.state.account) &&
-            <SnackbarDisplay severity="success" duration={3000} msg="MetaMask is ready to go!"/>
+            <SnackbarDisplay severity="success" duration={3500} msg="MetaMask is ready to go!"/>
           }
           {!this.state.hasMetaMask &&
-            <SnackbarDisplay severity="error" duration={4000} msg="MetaMask is not installed, please follow the instructions and set it up."/>
+            <SnackbarDisplay severity="error" duration={5000} msg="MetaMask is not installed, please follow the instructions and set it up."/>
           }
 					{(this.state.phase === 1 && this.state.receipt && this.state.receipt.from.toUpperCase() !== this.state.account.toUpperCase()) &&
 						<SnackbarDisplay severity="error" duration={10000} msg="Please switch back to your other MetaMask account to see the results."/>
@@ -491,7 +521,7 @@ class App extends Component {
             <SnackbarDisplay severity="success" duration={7000} msg={"Transaction mined at: \n"} link={"https://kovan.etherscan.io/tx/" + this.state.receipt.transactionHash}/>
           }
           {this.state.transError &&
-            <SnackbarDisplay severity="error" duration={5000} msg="Transaction failed."/>
+            <SnackbarDisplay severity="error" duration={4000} msg="Transaction failed."/>
           }
 					{/* Backdrop */}
 					<Backdrop className={classes.backdrop} open={this.state.backdrop}>
