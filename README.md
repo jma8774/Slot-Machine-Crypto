@@ -1,8 +1,10 @@
-# Slot-Machine-Crypto
-(12/2020 - 06/2021) Senior Design Project - A slot machine app with cryptocurrency payments.
+# Cryptocurrency Slot Machine
+(12/2020 - 06/2021) Senior Design Project - A slot machine app that uses the Ethereum blockchain technology on the Kovan Test Network.
 
 ## Deployment
-The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Heroku. <br/>
+The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Heroku.
+
+## Demonstration
 Quick demo convering most of the features can be found here on [YouTube](https://youtu.be/FcxqHsu04is).
 
 ## Preview
@@ -18,7 +20,7 @@ The website features a slot machine game which you can play with fake Ether on t
 ### Balance 💰
 Statistics on the user's balance since their first game. <br/>
 ![](https://i.imgur.com/6JVRbP9.png)
-### Chart History 📈
+### Balance History 📈
 Statistics of change in the user's balance over time. <br/>
 ![](https://i.imgur.com/OGLt7CJ.png)
 ### Table History 📝
