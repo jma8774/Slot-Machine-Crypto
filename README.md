@@ -5,4 +5,4 @@
 The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Heroku.
 
 ## Preview
-![](./preview.gif)
+![](./front-end/preview.gif)
