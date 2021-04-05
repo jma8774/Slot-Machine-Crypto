@@ -1,32 +1,5 @@
-const contract_addr = '0xF3b6892BDF8FA530c7BaAe810f791d2D39f721b8'
+const contract_addr = '0xbBf501590c1D04915033eBa325d8766737F1D2A2'
 const contract_abi = [
-	{
-		"inputs": [],
-		"name": "closeContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "fundCasino",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256[3][3]",
-				"name": "arr",
-				"type": "uint256[3][3]"
-			}
-		],
-		"name": "playerBet",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
 	{
 		"inputs": [],
 		"stateMutability": "payable",
@@ -44,19 +17,6 @@ const contract_abi = [
 		],
 		"name": "GameResult",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawCasinoFunds",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -105,6 +65,20 @@ const contract_abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "closeContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "fundCasino",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -473,6 +447,19 @@ const contract_abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256[3][3]",
+				"name": "arr",
+				"type": "uint256[3][3]"
+			}
+		],
+		"name": "playerBet",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -487,6 +474,19 @@ const contract_abi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawCasinoFunds",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

@@ -21,9 +21,6 @@ import ErrorIcon from '@material-ui/icons/Error';
 import Tooltip from '@material-ui/core/Tooltip';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
-const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
-const col2 = ['🍎','🍎','🍌','🍊','🍌','🔁','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
-const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
 const linesLookup = {
 	"top": [0, 1, 2],
 	"middle": [3, 4, 5],
@@ -130,7 +127,7 @@ function EmojiDisplay({value, idx, phase, slowReelCounter}) {
   )
 }
 
-function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
+function SlotDisplay({grid, phase, slowReelCounter, gameResult}) {
   const classes = useStyles();
   var greenBoxes = new Set()
   if(gameResult) {
@@ -141,7 +138,7 @@ function SlotDisplay({emojiDisplay, phase, slowReelCounter, gameResult}) {
     })
   }
   return(
-    emojiDisplay.map((value, idx) => (
+    grid.map((value, idx) => (
       <Grid item key={idx} xs={4} md={4} lg={4}>
         <Box boxShadow={3}>
           <Paper className={(greenBoxes.has(idx) && phase === 0 ? classes.game_paper_green : classes.game_paper)}>
@@ -209,23 +206,8 @@ function HelpTitle() {
   )
 }
 
-function Game({showGame, account, setValue, value, setPhase, playerBet, phase, colIdx, slowReelCounter, gameResult}) {
+function Game({showGame, account, setValue, value, setPhase, playerBet, phase, grid, slowReelCounter, gameResult}) {
   const classes = useStyles();
-  const col1Idx = colIdx[0];
-  const col2Idx = colIdx[1];
-  const col3Idx = colIdx[2];
-  // I want to show them like it's a real reel in a casino, not just all random
-  const emojiDisplay = [
-    col1[col1Idx % col1.length],
-    col2[col2Idx % col2.length],
-    col3[col3Idx % col3.length],
-    col1[(col1Idx+1) % col1.length],
-    col2[(col2Idx+1) % col2.length],
-    col3[(col3Idx+1) % col3.length],
-    col1[(col1Idx+2) % col1.length],
-    col2[(col2Idx+2) % col2.length],
-    col3[(col3Idx+2) % col3.length],
-  ]
 
   const [error, setError] = React.useState(false)
   const [helperText, setHelperText] = React.useState('')
@@ -270,7 +252,7 @@ function Game({showGame, account, setValue, value, setPhase, playerBet, phase, c
       <Box mt={10}>
         <Container maxWidth="sm">
           <Grid container justify="center" spacing={4}>
-            <SlotDisplay emojiDisplay={emojiDisplay} phase={phase} slowReelCounter={slowReelCounter} gameResult={gameResult}/>
+            <SlotDisplay grid={grid} phase={phase} slowReelCounter={slowReelCounter} gameResult={gameResult}/>
           </Grid>
         </Container>
         <Box mt={7} mr={3}>

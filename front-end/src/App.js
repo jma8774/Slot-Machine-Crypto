@@ -56,9 +56,6 @@ const theme = createMuiTheme({
 // 🍒 = Cherry
 // 🍇 = Marill]
 const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','7️⃣']
-const col1 = ['🍎','🍌','🔁','7️⃣','🍒','🍇','🔁','🍎','🍌','🍊','🍌','🍒','🍎','🔁','🍇','7️⃣','🍎','🍌','🔁','🍇','🍊']
-const col2 = ['🍎','🍎','🍌','🍊','🍌','🔁','🍒','🍇','🍌','🔁','🍒','🍌','🔁','🍒','7️⃣','🍒','🔁','🍌','🍇','🍒','🔁'] 
-const col3 = ['🍎','🔁','🍌','🍒','7️⃣','🍎','🍊','🔁','🍌','🍇','🔁','🍌','🍎','🍇','🔁','🍌','🍇','🍎','🔁','🍌','🍇']
 const linesLookup = {
 	"top": [0, 1, 2],
 	"middle": [3, 4, 5],
@@ -133,6 +130,15 @@ function MobileDialog() {
   )
 }
 
+// Return an array of length n, filled with random emojis
+function arrayRandomFill(n) {
+  var arr = []
+  for(var i = 0; i < n; i ++) {
+    arr.push(emojis[getRandomInt(emojis.length)])
+  }
+  return arr
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -154,7 +160,7 @@ function epochToDate(epoch) {
 
 function parseOutcome(game) {
   var newString = ''
-  console.log(game)
+  console.log("(Testing) Parsed game result data from smart contract:", game)
   const rows = game[6]
   const grid = game[4]
   rows.forEach(row => {
@@ -205,9 +211,7 @@ class App extends Component {
       phase: 0,
       gameResult: null,
       profit: 0,
-      col1Idx: getRandomInt(col1.length),
-      col2Idx: getRandomInt(col2.length),
-      col3Idx: getRandomInt(col3.length),
+      grid: arrayRandomFill(9),
       slowReelCounter: -1,
       chartData: [createChartData(new Date().toLocaleTimeString("en-US"), 0)],
       historyData: [],
@@ -266,11 +270,6 @@ class App extends Component {
     // Loading Phase
     else if(phase === 1) {
       console.log("Phase 1")
-      this.setState({
-        col1Idx: getRandomInt(col1.length),
-        col2Idx: getRandomInt(col2.length),
-        col3Idx: getRandomInt(col3.length),
-      })
       this.slotTimer = setInterval(() => this.slotTick(), 100);
       const curTime = Math.round(Date.now() / 1000) // cur time in epoch
       this.checkContractTimer = setInterval(() => this.checkContractTick(curTime), 3500);
@@ -294,39 +293,31 @@ class App extends Component {
 
   // Function to animate each column's when it is loading
   slotTick() {
-    const newSlowCounter = this.state.phase===2 ? this.state.slowReelCounter + 1 : this.state.slowReelCounter
+    var newSlowCounter = this.state.slowReelCounter
+    var newGrid = arrayRandomFill(9)
+    if(this.state.phase === 2) {
+      newSlowCounter = this.state.slowReelCounter + 1
+      const finalGrid = this.state.gameResult 
+        ? this.state.gameResult[4].flat().map((value, idx) => emojis[parseInt(value)]) 
+        : ['❌','❌','❌','❌','❌','❌','❌','❌','❌']
+      // 1D Array of final emojis grid
+      newGrid = finalGrid
+      if(newSlowCounter >= 5 && newSlowCounter < 10) {
+        for(let i=0; i<9; i++) {
+          newGrid[i] = i%3 === 2 ? emojis[getRandomInt(emojis.length)] : newGrid[i]
+        }
+      } else if(newSlowCounter > -1 && newSlowCounter < 5) {
+        for(let i=0; i<9; i++) {
+          newGrid[i] = i%3 >= 1  ? emojis[getRandomInt(emojis.length)] : newGrid[i]
+        }
+      }
+    }
     this.setState({
       slowReelCounter: newSlowCounter,
-      col1Idx: newSlowCounter>=0 ? this.setCol(this.state.gameResult, 0) : this.state.col1Idx + 1,
-      col2Idx: newSlowCounter>=5 ? this.setCol(this.state.gameResult, 1) : this.state.col2Idx + 1,
-      col3Idx: newSlowCounter>=10 ? this.setCol(this.state.gameResult, 2) : this.state.col3Idx + 1,
+      grid: newGrid,
     });
   }
 
-	// Set Final Grid in Phase 2
-	setCol(gameResult, idx) {
-		if(gameResult === null) 
-			return this.state.col1Idx
-
-		const grid = gameResult[4]
-		var selectedCol
-		if(idx === 0)
-			selectedCol = col1
-		else if(idx === 1)
-			selectedCol = col2
-		else if(idx === 2)
-			selectedCol = col3
-
-		const need = [grid[0][idx], grid[1][idx], grid[2][idx]].map((res) => emojis[res])
-		for(var i=0; i<selectedCol.length; i++) {
-			const [x0, x1, x2] = [selectedCol[i], selectedCol[(i+1)%selectedCol.length], selectedCol[(i+2)%selectedCol.length]]
-			if(x0 === need[0] && x1 === need[1] && x2 === need[2]) {
-				return i
-			}
-		}
-		return 0
-	}
-	
   // Periodically checks if game is done
   checkContractTick(curTime) {
     contract.methods.getFinishedGames().call()
@@ -582,7 +573,7 @@ class App extends Component {
               setPhase={this.setPhase} 
               playerBet={this.playerBet}
               phase={this.state.phase} 
-              colIdx={[this.state.col1Idx, this.state.col2Idx, this.state.col3Idx]}
+              grid={this.state.grid}
               slowReelCounter={this.state.slowReelCounter}
 							gameResult={this.state.gameResult}
             />
