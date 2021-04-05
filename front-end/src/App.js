@@ -154,7 +154,6 @@ function epochToDate(epoch) {
 
 function parseOutcome(game) {
   var newString = ''
-  console.log(game)
   const rows = game[6]
   const grid = game[4]
   rows.forEach(row => {
