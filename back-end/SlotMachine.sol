@@ -17,9 +17,6 @@ contract SlotMachine {
     // 6 = jackpot
     
     // Instantiate each reel with 21 symbols
-    uint[] leftReel = [0, 3, 1, 6, 2, 4, 1, 0, 3, 5, 3, 2, 0, 1, 4, 6, 0, 3, 1, 4, 5];
-    uint[] middleReel = [0, 0, 3, 5, 3, 1, 2, 4, 3, 1, 2, 3, 1, 2, 6, 2, 1, 3, 4, 2, 1];
-    uint[] rightReel = [0, 1, 3, 2, 6, 0, 5, 1, 3, 4, 1, 3, 0, 4, 1, 3, 4, 0, 1, 3, 4];
     
     mapping(uint => uint) public symbolWorth; // int to int mapping to determine value of a symbol
     string[] private linesWon; // array will keep track of lines won in a game
@@ -32,10 +29,10 @@ contract SlotMachine {
         uint playerBetAmount;
         uint time;
         uint[3][3] slotsState;
-        bytes32 slotsHash;
         uint prizeMoney;
         string[] linesWon;
         string result;
+        bytes32 slotsHash;
     }
     
     Game[] private Games;
@@ -83,34 +80,12 @@ contract SlotMachine {
         msg.sender.transfer(_amount);
         casinoBalance -= _amount;
     }
-    
-    // Function will be responsible for spinning the slot machine (generating a 3 by 3 array with random symbols)
-    function spinSlots() private returns(uint[3][3] memory) {
-        uint leftTopRand = randMod(leftReel.length); // generates a int from 0 to 20
-        uint middleTopRand = randMod(middleReel.length); // generates a int from 0 to 20
-        uint rightTopRand = randMod(rightReel.length); // generates a int from 0 to 20
-        
-        uint[3][3] memory slotsState = [ [ leftReel[leftTopRand], middleReel[middleTopRand], rightReel[rightTopRand] ],
-                                         [ leftReel[(leftTopRand + 1) % leftReel.length], middleReel[(middleTopRand + 1) % middleReel.length], rightReel[(rightTopRand + 1) % rightReel.length] ],
-                                         [ leftReel[(leftTopRand + 2) % leftReel.length], middleReel[(middleTopRand + 2) % middleReel.length], rightReel[(rightTopRand + 2) % rightReel.length] ] ];
-        return slotsState;
-    }
 
     // Hashing function: takes in address, player bet amount, and the slots after spin
     function hash(address _addr, uint _bet, uint[3][3] memory _slotResults) internal pure returns(bytes32) {
         return keccak256(abi.encodePacked(_addr, _bet, _slotResults));
     }
     
-    // Method of generating random numbers from: https://www.geeksforgeeks.org/random-number-generator-in-solidity-using-keccak256/
-    // Will probably not use this method for the real project as it is unsafe and very vulnerable to attackers as mentioned in the link
-    uint randNonce = 0; // This will be incremented at each call to randMod to ensure a new random number
-      
-    // Defining a function to generate a random number 
-    function randMod(uint _modulus) internal returns(uint)  
-    { 
-        randNonce++; // increase nonce 
-        return uint(keccak256(abi.encodePacked(now, msg.sender, randNonce))) % _modulus; 
-    }
     
     // Function will calculate the total prize earned from a row
     function calculatePrize(uint _leftSymbol, uint _middleSymbol, uint _rightSymbol, uint _playerBetAmount) private returns(uint) {
@@ -129,7 +104,7 @@ contract SlotMachine {
         return totalPrize;
     }
     
-    function playerBet() public payable onlyPlayer {
+    function playerBet(uint[3][3] memory arr) public payable onlyPlayer {
         require(getGameIndex(msg.sender) == -1, "You are already playing a casino game (1 game at a time)!");
         require(casinoBalance >= (1500 + 1500 * Games.length), "Casino contract ran out of money to play with right now."); // ensure 1500 in casino balance for each player
         require(msg.value == 1 wei || msg.value == 2 wei || msg.value == 3 wei, "You must pay 1, 2, or 3 wei to play the game!");
@@ -138,11 +113,11 @@ contract SlotMachine {
             msg.sender, // player address
             msg.value, // player bet amount
             now, // time of game
-            spinSlots(), // slot machine state
-            0, // slot info and results hashed
+            arr, // slot machine state
             0, // prize money
             linesWon, // lines won
-            ''); // result
+            '',// result
+            0); // Slot hash
         Games.push(newGame);
         casinoBalance += msg.value; // how much wei the player sent to this contract
         

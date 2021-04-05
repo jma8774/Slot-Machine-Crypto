@@ -85,6 +85,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
+
+
 function SnackbarDisplay({severity, msg, link, duration}) {
   const [open, setOpen] = React.useState(true);
   const handleClose = (event, reason) => {
@@ -151,6 +154,7 @@ function epochToDate(epoch) {
 
 function parseOutcome(game) {
   var newString = ''
+  console.log(game)
   const rows = game[6]
   const grid = game[4]
   rows.forEach(row => {
@@ -163,6 +167,27 @@ function parseOutcome(game) {
   // console.log("Winning outcomes:", newString.substring(0, newString.length-1))
   return newString.substring(0, newString.length-1)
 }
+
+function randNumGen(){
+
+	var arr = new Uint32Array(9);
+	window.crypto.getRandomValues(arr);
+
+	arr.forEach((element, index) => {
+		arr[index] = element%7
+	})
+
+	function splitArray(array, part) {
+		var tmp = [];
+		for(var i = 0; i < array.length; i += part) {
+			tmp.push(Array.from(array.slice(i, i + part)));
+		}
+		return tmp;
+	}
+
+	return splitArray(arr,3)
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -383,7 +408,7 @@ class App extends Component {
 			transError: false,
 			gameResult: null,
 		})
-    contract.methods.playerBet().send({
+    contract.methods.playerBet(randNumGen()).send({
       from: this.state.account,
       value: this.state.value
     })
