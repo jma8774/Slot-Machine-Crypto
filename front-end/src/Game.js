@@ -230,7 +230,7 @@ function Game({showGame, account, setValue, value, setPhase, playerBet, phase, g
   const handleStart = (e) => {
     if(!account) {
       setError(true)
-      setHelperText('Connect to MetaMask')
+      setHelperText('Connect to the MetaMask (Kovan Test Network)')
       return
     }
     if(!value) {
