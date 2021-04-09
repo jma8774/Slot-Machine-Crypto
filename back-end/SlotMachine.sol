@@ -16,8 +16,6 @@ contract SlotMachine {
     // 5 = orange
     // 6 = jackpot
     
-    // Instantiate each reel with 21 symbols
-    
     mapping(uint => uint) public symbolWorth; // int to int mapping to determine value of a symbol
     string[] private linesWon; // array will keep track of lines won in a game
     
