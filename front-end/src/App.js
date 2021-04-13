@@ -579,10 +579,10 @@ class App extends Component {
             />
             <Stats 
               showGame={this.state.showGame} 
+              winRate={this.state.historyData.length === 0 ? null : (this.state.numWins/this.state.historyData.length) * 100}
               chartData={this.state.chartData}
               historyData={this.state.historyData}
               profit={this.state.profit}
-              numWins={this.state.numWins}
               startDate={this.state.startDate}
 							page={this.state.page}
 							setPage={this.setPage}

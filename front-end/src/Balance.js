@@ -80,12 +80,11 @@ function Balance({profit, winRate, startDate}) {
   const [month, date, year] = startDate.toLocaleDateString("en-US").split("/")
 
   const [index, setIndex] = React.useState(0);
-  const percentWin = winRate*100
-  const data = percentWin === 0
+  const data = winRate === null
     ? [{ name: "No Games", value: 100 }]
     : [
-        {name: "Win", value: percentWin},
-        {name: "Lose", value: 100-percentWin}
+        {name: "Win", value: winRate},
+        {name: "Lose", value: 100-winRate}
       ]
   const onPieEnter = (_, index) => {
     setIndex(index)
