@@ -26,6 +26,7 @@ import Stats from './Stats';
 
 const ContractABI = require('./ContractABI.js')
 const Web3 = require('web3')
+const Crypto = require('crypto')
 var metaNet
 var contract_addr 
 var contract_abi
@@ -193,6 +194,36 @@ function randNumGen(){
 
 	return splitArray(arr,3)
 }
+
+async function hashNumGen() {
+  // Turn into array buffer to hash
+  function arrayToArrayBuffer(array) {
+    var length = array.length;
+    var buffer = new ArrayBuffer(length*4); // 4 bytes for each int
+    for (var i = 0; i < length; i++) { // Store values from array to buffer
+      buffer[i] = array[i];
+    }
+    console.log("Buffer after load:", buffer);
+    return buffer;
+  }
+
+  const randSlots = randNumGen();
+  const data = arrayToArrayBuffer(randSlots);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  console.log("digest length:", hash.byteLength);
+  // Convert hash to hex string
+  const hashArray = Array.from(new Uint32Array(hash));
+  console.log("converting:", hashArray);
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+  return hashHex;
+
+  // Using node.js hashing functions
+  // const randSlots = randNumGen();
+  // const typedrandSlots = new Uint32Array(randSlots);
+  // const hash = Crypto.createHash('sha256').update(typedrandSlots).digest('base64');
+  // return hash;
+}
+
 
 class App extends Component {
   constructor(props) {
@@ -386,6 +417,9 @@ class App extends Component {
     })
 
 		this.parseHistory(() => console.log("Initialized with account: " + this.state.account))
+    // Simple refreshing to test the hash function values. Can delete/comment the 2 lines below
+    // const testHash = await hashNumGen();
+    // console.log(testHash);
   }
 
   // Send transaction
