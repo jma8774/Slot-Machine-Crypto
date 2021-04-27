@@ -175,25 +175,53 @@ function parseOutcome(game) {
   return newString.substring(0, newString.length-1)
 }
 
-function randNumGen(){
+function randomDigit() {
+  return Math.floor(Math.random() * Math.floor(2));
+}
 
-	var arr = new Uint32Array(9);
-	window.crypto.getRandomValues(arr);
+function generateRandomBinary(binaryLength) {
+  let binaryNum = "0b";
+  for(let i = 0; i < binaryLength; ++i) {
+    binaryNum += randomDigit();
+  }
+  return binaryNum;
+}
 
-	arr.forEach((element, index) => {
-		arr[index] = element%7
-	})
+function bin2dec(bin){
+  return parseInt(bin, 2).toString(10);
+}
 
-	function splitArray(array, part) {
+function splitArray(array, part) {
 		var tmp = [];
 		for(var i = 0; i < array.length; i += part) {
 			tmp.push(Array.from(array.slice(i, i + part)));
 		}
 		return tmp;
-	}
-
-	return splitArray(arr,3)
 }
+
+function randNumGen(){
+    const casinoRandom = generateRandomBinary(256);
+    var casinoRandomBits = casinoRandom.substring(0,29); //Selects 27 bits for casino side
+    const playerRandom = generateRandomBinary(256);
+    var playerRandomBits = playerRandom.substring(0,29);//Selects 27 bits for player side
+    
+    var slotChoice = (casinoRandomBits ^ playerRandomBits).toString(2); //Perform XOR bit-manipulation 
+    
+    while (slotChoice.length < 27){
+        slotChoice = slotChoice.replace(/^/,'0'); //Replace missing 0s at the front of the number
+    }
+    
+    var tmp = splitArray(slotChoice, 3); //Split 27 bit number into 9 groups of 3 numbers each
+    var tmp2 = [];
+    
+    for (var i = 0; i < tmp.length; i ++){
+        tmp2.push(Array.from(bin2dec(tmp[i].join('')))); //Combine a group of 3 bits to convert to decimal
+        }
+    
+    return splitArray(tmp2, 3); //return final 3x3 output
+}
+
+console.log(randNumGen());
 
 // Take in player address to include in hashing
 async function hash(player_address) {
