@@ -7,6 +7,22 @@ The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Herok
 ## Demonstration
 Quick demo convering most of the features can be found here on [YouTube](https://youtu.be/FcxqHsu04is).
 
+## Installation
+All items listed in the dependencies must be downloaded and installed in order to run our application locally
+
+### Dependencies 
+NodeJS
+MetaMask
+
+### Instruction
+Download NodeJS and install it, then the Metamask browser extension. You'll need to setup a metamask account in order to use it so please do so. Once an account has been setup, you'll need to fill the account with test ethereum and it can be done using this [link](https://kovan.chain.link/). You just need to put in your MetaMask address and you will receive ethereum. 
+</br>
+</br>
+Next you'll need to clone our repository and in an integrated terminal with the repo opened, type in "npm install" and wait until the download is completed. Then afterwards, type in "npm start" in order to deploy locally. 
+</br>
+</br>
+There is more information on setting up metamask and how to play the game after you deploy the application. The information is also on our public site so please check that out as well
+
 ## Preview
 ![](./front-end/preview.gif)
 
