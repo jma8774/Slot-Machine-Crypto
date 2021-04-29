@@ -175,40 +175,29 @@ function parseOutcome(game) {
   return newString.substring(0, newString.length-1)
 }
 
-function randNumGen(){
+function randNumGen() {
+  const arr = Crypto.randomBytes(256);
 
-	var arr = new Uint32Array(9);
-	window.crypto.getRandomValues(arr);
+  var temp = [];
+  for(var i = 0; i < arr.length; i++) {
+    temp.push(arr[i] % 7);
+  }
 
-	arr.forEach((element, index) => {
-		arr[index] = element%7
-	})
+  function splitArray(array) {
+    var tmp = [];
+    for(var i = 0; i < 9; i+=3) {
+      tmp.push(Array.from(array.slice(i, i + 3)));
+    }
+    return tmp;
+  }
 
-	function splitArray(array, part) {
-		var tmp = [];
-		for(var i = 0; i < array.length; i += part) {
-			tmp.push(Array.from(array.slice(i, i + part)));
-		}
-		return tmp;
-	}
-
-	return splitArray(arr,3)
+  // Return array for slot machine symbols, and original array for future hashing
+  return [splitArray(temp), arr];
 }
 
-// Take in player address to include in hashing
-async function hash(player_address) {
-  const randBytes = Crypto.randomBytes(256);
-  //console.log(`${randBytes.length} bytes of random data: ${randBytes.toString('hex')}`);
-  // Take first bits and store it
-  const firstBits = randBytes.subarray(0,9);
-  //console.log(firstBits);
-  // Take the stored bits and mod 7 to get our slot symbols
-  // Maybe find a way to incorporate randNumGen()?
-  const slotRandomNumbers = Buffer.from(firstBits);
-  for(let i=0; i<slotRandomNumbers.length; i++) {
-    slotRandomNumbers[i] = slotRandomNumbers[i] % 7;
-  }
-  //console.log(slotRandomNumbers);
+// Take in player address, the original array before mod 7, and the slot matrix
+async function hash(player_address, randBytes, slotRandomNumbers) {
+  // const [randBytes, slotRandomNumbers] = randNumGen();
   // Create the hash
   const hash = Crypto.createHash('sha256');
   const hashResult = hash.update(randBytes).update(slotRandomNumbers).update(player_address).digest('hex');
@@ -240,6 +229,7 @@ class App extends Component {
       numWins: 0,
 			page: 0,
       startDate: new Date(),
+      hash: '',
     };
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
@@ -408,13 +398,10 @@ class App extends Component {
     })
 
 		this.parseHistory(() => console.log("Initialized with account: " + this.state.account))
-    // Simple refreshing to test. Can delete/comment the 2 lines below
-    const testHash = await hash(this.state.account);
-    console.log("Hash: ", testHash);
   }
 
   // Send transaction
-  playerBet() {
+  async playerBet() {
     if(!this.state.hasMetaMask)
       return
 		clearInterval(this.phase0Timer);
@@ -424,7 +411,15 @@ class App extends Component {
 			transError: false,
 			gameResult: null,
 		})
-    contract.methods.playerBet(randNumGen()).send({
+    const arrayValues = randNumGen();
+    const slots = arrayValues[0];
+    const originalValues = arrayValues[1];
+    const currentHash = await hash(this.state.account, originalValues, slots);
+    this.setState({
+      hash: currentHash,
+    })
+    console.log("Current Hash:", this.state.hash)
+    contract.methods.playerBet(slots).send({
       from: this.state.account,
       value: this.state.value
     })
@@ -435,8 +430,18 @@ class App extends Component {
 			this.setPhase(null, 2)
       console.log("Transaction failed.");
     })
+    .on('confirmation', () => {
+      if(currentHash != this.state.hash) {
+        this.setState({
+          transError: true,
+        })
+        this.setPhase(null, 2)
+        console.log("Transaction failed. Something was changed illegally.");
+      }
+    })
     .then(receipt => {
       console.log("Transaction mined: Block is located at https://kovan.etherscan.io/tx/" + receipt.transactionHash)
+      console.log("Hash after transaction:", this.state.hash);
       this.setState({
         receipt: receipt,
       })
