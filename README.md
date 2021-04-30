@@ -7,6 +7,9 @@ The app can be found [here](https://crypto-slot-machine.herokuapp.com/) on Herok
 ## Demonstration
 Quick demo convering most of the features can be found here on [YouTube](https://youtu.be/FcxqHsu04is).
 
+## Preview
+![](./front-end/preview.gif)
+
 ## Installation
 All items listed in the dependencies must be downloaded and installed in order to run our application locally
 
@@ -22,9 +25,6 @@ Next you'll need to clone our repository and in an integrated terminal with the 
 </br>
 </br>
 There is more information on setting up metamask and how to play the game after you deploy the application. The information is also on our public site so please check that out as well
-
-## Preview
-![](./front-end/preview.gif)
 
 # Features
 ### Instructions ℹ️
