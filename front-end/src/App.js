@@ -415,6 +415,7 @@ class App extends Component {
     const slots = arrayValues[0];
     const originalValues = arrayValues[1];
     const currentHash = await hash(this.state.account, originalValues, slots);
+    console.log("Creating Hash:", currentHash);
     this.setState({
       hash: currentHash,
     })
@@ -430,8 +431,8 @@ class App extends Component {
 			this.setPhase(null, 2)
       console.log("Transaction failed.");
     })
-    .on('confirmation', () => {
-      if(currentHash != this.state.hash) {
+    .on('sending', () => {
+      if(currentHash !== this.state.hash) {
         this.setState({
           transError: true,
         })
