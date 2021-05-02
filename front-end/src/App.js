@@ -176,23 +176,43 @@ function parseOutcome(game) {
 }
 
 function randNumGen() {
-  const arr = Crypto.randomBytes(256);
+  
+const arr = Crypto.randomBytes(256);//player side
+const arr2 = Crypto.randomBytes(256);//casino side 
 
-  var temp = [];
-  for(var i = 0; i < arr.length; i++) {
-    temp.push(arr[i] % 7);
-  }
+var playerBits = arr.subarray(0,5);
+var casinoBits = arr2.subarray(0,5);
 
-  function splitArray(array) {
+function bytesToHex(bytes) {
+    for (var hex = [], i = 0; i < bytes.length; i++) {
+        var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];
+        hex.push((current >>> 4).toString(16));
+        hex.push((current & 0xF).toString(16));
+    }
+    return hex.join("");
+}
+
+playerBits = parseInt(bytesToHex(playerBits).toString(), 16);
+casinoBits = parseInt(bytesToHex(casinoBits).toString(), 16);
+
+let tmp = playerBits => Number(playerBits);
+const playerChoice = Array.from(String(playerBits), tmp);
+let tmp2 = casinoBits => Number(casinoBits);
+const casinoChoice = Array.from(String(casinoBits), tmp2);
+
+const xorResults = playerChoice.map(function (num, idx) {
+  return (num ^ casinoChoice[idx])%7;
+});
+
+function splitArray(array) {
     var tmp = [];
     for(var i = 0; i < 9; i+=3) {
       tmp.push(Array.from(array.slice(i, i + 3)));
     }
     return tmp;
-  }
-
-  // Return array for slot machine symbols, and original array for future hashing
-  return [splitArray(temp), arr];
+ }
+ 
+return [splitArray(xorResults), arr];
 }
 
 // Take in player address, the original array before mod 7, and the slot matrix
