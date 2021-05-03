@@ -176,23 +176,26 @@ function parseOutcome(game) {
 }
 
 function randNumGen() {
-  const arr = Crypto.randomBytes(256);
+  
+const arr = Crypto.randomBytes(256);//player side
+const arr2 = Crypto.randomBytes(256);//casino side 
 
-  var temp = [];
-  for(var i = 0; i < arr.length; i++) {
-    temp.push(arr[i] % 7);
-  }
+var playerBits = arr.subarray(0,9);
+var casinoBits = arr2.subarray(0,9);
 
-  function splitArray(array) {
+const xorResults = playerBits.map(function (num, idx) {
+  return (num ^ casinoBits[idx])%7;
+});
+
+function splitArray(array) {
     var tmp = [];
     for(var i = 0; i < 9; i+=3) {
       tmp.push(Array.from(array.slice(i, i + 3)));
     }
     return tmp;
-  }
-
-  // Return array for slot machine symbols, and original array for future hashing
-  return [splitArray(temp), arr];
+ }
+ 
+return [splitArray(xorResults), arr];
 }
 
 // Take in player address, the original array before mod 7, and the slot matrix
