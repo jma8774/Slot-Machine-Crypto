@@ -7,14 +7,15 @@ contract SlotMachine {
     address payable casinoOwner; // casino owner address
     uint private casinoBalance; // Casino funds
     
-    uint[] private symbols = [0, 1, 2, 3, 4, 5, 6]; // 7 symbols used for slot machine
+    uint[] private symbols = [0, 1, 2, 3, 4, 5, 6, 7]; // 7 symbols used for slot machine
     // 0 = apple
     // 1 = refund
     // 2 = cherry
     // 3 = banana
     // 4 = graph
     // 5 = orange
-    // 6 = jackpot
+    // 6 = kiwi
+    // 7 = jackpot
     
     mapping(uint => uint) public symbolWorth; // int to int mapping to determine value of a symbol
     string[] private linesWon; // array will keep track of lines won in a game
@@ -46,7 +47,8 @@ contract SlotMachine {
         symbolWorth[3] = 6; // banana
         symbolWorth[4] = 12; // grape
         symbolWorth[5] = 100; // orange
-        symbolWorth[6] = 300; // jackpot
+        symbolWorth[6] = 200; // kiwi
+        symbolWorth[7] = 300; // jackpot
     }
 
     modifier onlyOwner() {
