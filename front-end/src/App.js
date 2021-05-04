@@ -161,7 +161,7 @@ function epochToDate(epoch) {
 
 function parseOutcome(game) {
   var newString = ''
-  console.log("(Testing) Parsed game result data from smart contract:", game)
+  // console.log("(Testing) Parsed game result data from smart contract:", game)
   const rows = game[6]
   const grid = game[4]
   rows.forEach(row => {
