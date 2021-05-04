@@ -406,7 +406,7 @@ class App extends Component {
 		})
     const arrayValues = randNumGen();
     const slots = arrayValues[0];
-    console.log(slots)
+    // console.log(slots)
     const originalValues = arrayValues[1];
     const currentHash = await hash(this.state.account, originalValues, slots);
     console.log("Creating Hash:", currentHash);
