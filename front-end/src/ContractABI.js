@@ -1,4 +1,4 @@
-const contract_addr = '0xbBf501590c1D04915033eBa325d8766737F1D2A2'
+const contract_addr = '0xe70aa20Fe2857ae0C721887762B61457CC3BE035'
 const contract_abi = [
 	{
 		"inputs": [],

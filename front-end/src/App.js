@@ -49,14 +49,7 @@ const theme = createMuiTheme({
   },
 });
 
-// 🍎 = Pikachu
-// 🍌 = Lotad
-// 🔁 = Replay
-// 7️⃣ = Red 7
-// 🍊 = Refund (Blue 7)
-// 🍒 = Cherry
-// 🍇 = Marill]
-const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','7️⃣']
+const emojis = ['🍎','🔁','🍒','🍌','🍇','🍊','🥝','7️⃣']
 const linesLookup = {
 	"top": [0, 1, 2],
 	"middle": [3, 4, 5],
@@ -180,7 +173,7 @@ function randNumGen() {
 
   var temp = [];
   for(var i = 0; i < arr.length; i++) {
-    temp.push(arr[i] % 7);
+    temp.push(arr[i] % 8);
   }
 
   function splitArray(array) {
@@ -413,6 +406,7 @@ class App extends Component {
 		})
     const arrayValues = randNumGen();
     const slots = arrayValues[0];
+    console.log(slots)
     const originalValues = arrayValues[1];
     const currentHash = await hash(this.state.account, originalValues, slots);
     console.log("Creating Hash:", currentHash);

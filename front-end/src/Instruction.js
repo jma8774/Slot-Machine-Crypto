@@ -232,6 +232,7 @@ function Instruction({showInstr}) {
                         ['🍌🍌🍌', '6 Wei'], 
                         ['🍇🍇🍇', '12 Wei'], 
                         ['🍊🍊🍊', '100 Wei'], 
+                        ['🥝🥝🥝', '200 Wei'],
                         ['7️⃣7️⃣7️⃣', '300 Wei'], 
                         ['🔁🔁🔁', 'Refund if no other winning combinations']
                       ].map((val) => (
