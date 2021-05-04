@@ -412,7 +412,7 @@ class App extends Component {
     this.setState({
       hash: currentHash,
     })
-    console.log("Creating Hash:", currentHash);
+    console.log("Creating Hash:", this.state.hash);
     await contract.methods.playerBet(slots).send({
       from: this.state.account,
       value: this.state.value
