@@ -7,7 +7,7 @@ contract SlotMachine {
     address payable casinoOwner; // casino owner address
     uint private casinoBalance; // Casino funds
     
-    uint[] private symbols = [0, 1, 2, 3, 4, 5, 6, 7]; // 7 symbols used for slot machine
+    uint[] private symbols = [0, 1, 2, 3, 4, 5, 6, 7]; // 8 symbols used for slot machine
     // 0 = apple
     // 1 = refund
     // 2 = cherry
