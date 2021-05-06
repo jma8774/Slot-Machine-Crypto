@@ -1,7 +1,7 @@
 # Slot Machine Smart Contract
 
 ## Global Variables
-`casinoOwner` variable of type `address` that stores the address of person who deployed the smart contract.
+`casinoOwner` variable of type `address` that stores the address of the person who deployed the smart contract.
 
 `casinoBalance` variable of type `uint` that stores the amount of Wei currently in the smart contract.
 
@@ -17,7 +17,7 @@
 
 `symbolWorth` mapping from `uint` to `uint` that stores the value of a symbol.
 
-The following table shows the integer tied to a symbol as well as it's worth in Wei:
+The following table shows the integer tied to a symbol as well as its worth in Wei:
 
 | Integer | Symbol  | Value |
 | ------- | ------- | ----- |
@@ -30,31 +30,31 @@ The following table shows the integer tied to a symbol as well as it's worth in 
 | 6       | 🥝     | 200   |
 | 7       | 7️⃣     | 300   |
 
-\* - Refund symbol is initialized to 0 and gets assigned the value of the player's bet.
+\* - 🔁 symbol is initialized to 0 and gets assigned the value of the player's bet.
 
-\*\* - Cherry symbol has a value of 2 for a single symbol. Each consecutive Cherry symbol adds an additional 2, up to a maximum of 6 in one line.
+\*\* - 🍒 symbol has a value of 2 for a single symbol. Each consecutive 🍒 symbol adds 2, up to a maximum of 6 for one line.
 
-`State` `enum` that keeps track of the state of the game, the state `inProgress` is assigned to game upon the player betting and being placed in a game, and the state `Finished` is assigned to the game after the game finishes.
+`State` is an `enum` that keeps track of the state of the game, the state `inProgress` is assigned to the game upon the player betting and being placed in a game, and the state `Finished` is assigned to the game after the game finishes.
 
 ## Game representation using struct
 
-`Game` `struct` to represent a game in the slot machine. The following variables compose the struct:
+`Game` is a `struct` to represent a game in the slot machine. The following variables compose the struct:
 
-`state` `State` variable that keeps track of game state.
+`state` is of type `State`, it is used to keep track of game state.
 
 `playerAddress` variable of type `address` that stores the address of the player for the game.
 
-`playerBetAmount` variable of type `uint` that stores the amount of Wei that the player bet for the game.
+`playerBetAmount` variable of type `uint` that stores the amount of Wei that the player bets for the game.
 
 `time` variable of type `uint` that stores the current block timestamp as seconds since unix epoch. In other words, the start time of the game.
 
-`slotsState` 2-dimensional array of type `uint` that stores the current status of the slot machine reels as a 3x3 array.
+`slotsState` 2-dimensional array of size 3x3 and of type `uint` that stores the current status of the slot machine reels.
 
 `prizeMoney` variable of type `uint` that stores the amount of Wei that the player has won for a game.
 
 `linesWon` array of type `string` that stores the names of the lines won by the player for a game.
 
-`result` variable of type `string` that tells if the player has won or lost a game, based on if there is a winning line.
+`result` variable of type `string` that tells if the player has won or lost a game based on if there is a winning line.
 
 `slotsHash` variable of type `bytes32` that stores the hash for a game.
 
@@ -68,15 +68,15 @@ The following table shows the integer tied to a symbol as well as it's worth in 
 
 ## Functions
 
-`fundCasino` function with the `onlyOwner` modifer that allows the casino owner to fund the smart contract with Wei.
+`fundCasino` function with the `onlyOwner` modifier that allows the casino owner to fund the smart contract with Wei.
 
-`withdrawCasinoFunds` function with the `onlyOwner` modifer that allows the casino owner to withdraw Wei from the smart contract provided there are no active games (Games array is empty) and if there are sufficient funds to withdraw from the smart contract.
+`withdrawCasinoFunds` function with the `onlyOwner` modifier that allows the casino owner to withdraw Wei from the smart contract provided there are no active games (`Games` array is empty) and if there are sufficient funds to withdraw from the smart contract.
 
 `hash` function takes in address, player bet amount, and the slots after spin. Returns the hash.
 
 `calculatePrize` function accepts 3 symbols of type `uint` and the player bet amount of type `uint`. Returns the total prize money for the game (of type `uint`).
 
-`playerBet` function accepts a 2-dimensional array of size 3x3 of type `uint`. Provided that the player is not already in a game, the smart contract has enough funds, and the player places a valid bet of 1, 2, or 3 Wei, then the player gets placed into the `Games` array. Function calls the `calculatePrize` function and `resetGame` function.
+`playerBet` function accepts a 2-dimensional array of size 3x3 and of type `uint`. Provided that the player is not already in a game, the smart contract has enough funds, and the player places a valid bet of 1, 2, or 3 Wei, then the player gets placed into the `Games` array. Function calls `calculatePrize` and `resetGame`.
 
 `getGameIndex` function accepts an `address`. Returns the index of the game that the player is in from the `Games` array (of type `int`).
 
