@@ -21,14 +21,14 @@ The following table shows the integer tied to a symbol as well as it's worth in 
 
 | Integer | Symbol  | Value |
 | ------- | ------- | ----- |
-| 0       | Apple   | 3     |
-| 1       | Refund  | 0*    |
-| 2       | Cherry  | 2**   |
-| 3       | Banana  | 6     |
-| 4       | Grape   | 12    |
-| 5       | Orange  | 100   |
-| 6       | Kiwi    | 200   |
-| 7       | Jackpot | 300   |
+| 0       | 🍎     | 3     |
+| 1       | 🔁     | 0*    |
+| 2       | 🍒     | 2**   |
+| 3       | 🍌     | 6     |
+| 4       | 🍇     | 12    |
+| 5       | 🍊     | 100   |
+| 6       | 🥝     | 200   |
+| 7       | 7️⃣     | 300   |
 
 \* - Refund symbol is initialized to 0 and gets assigned the value of the player's bet.
 
