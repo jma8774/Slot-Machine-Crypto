@@ -35,7 +35,7 @@ contract SlotMachine {
     }
     
     Game[] private Games;
-    Game[] public FinishedGames; // TESTING PURPOSES
+    Game[] public FinishedGames;
     
     constructor() public payable {
         casinoOwner = msg.sender; 
@@ -194,7 +194,7 @@ contract SlotMachine {
     function resetGame() internal {
         int index = getGameIndex(msg.sender);
         require(index != -1, "Player not in any of the casino games!");
-        removePlayer(uint(index)); // ***** FOR TESTING PURPOSES, I WILL REMOVE TO THE FINISHED GAMES ARRAY ******
+        removePlayer(uint(index));
     }
     
     // Function that removes a player's game from the game list
