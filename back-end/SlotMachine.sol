@@ -91,9 +91,7 @@ contract SlotMachine {
     function calculatePrize(uint _leftSymbol, uint _middleSymbol, uint _rightSymbol, uint _playerBetAmount) private returns(uint) {
         uint totalPrize = 0;
         symbolWorth[1] = _playerBetAmount; // refund
-        if (_leftSymbol == _middleSymbol && _leftSymbol == _rightSymbol) // perfect line match
-            totalPrize += symbolWorth[_leftSymbol];
-        else if (_leftSymbol == symbols[2]) { // cherry logic - (symbols[2] is cherry)
+        if (_leftSymbol == symbols[2]) { // cherry logic - (symbols[2] is cherry)
             totalPrize += symbolWorth[_leftSymbol];
             if (_middleSymbol == symbols[2]) {
                 totalPrize += symbolWorth[_middleSymbol];
@@ -101,6 +99,8 @@ contract SlotMachine {
                     totalPrize += symbolWorth[_rightSymbol];
             }
         }
+        else if (_leftSymbol == _middleSymbol && _leftSymbol == _rightSymbol) // perfect line match
+            totalPrize += symbolWorth[_leftSymbol];
         return totalPrize;
     }
     
