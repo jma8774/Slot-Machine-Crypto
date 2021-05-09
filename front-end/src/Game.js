@@ -219,7 +219,7 @@ function Game({showGame, account, setValue, value, setPhase, playerBet, phase, g
       value = "0x" + e.target.value;
       setError(false)
       setHelperText('')
-      console.log("Value changed to " + value)
+      // console.log("Value changed to " + value)
     } else {
       value = "";
       setError(true)

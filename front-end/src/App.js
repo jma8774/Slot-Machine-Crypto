@@ -266,7 +266,7 @@ class App extends Component {
     
     // Waiting Phase
     if(phase === 0) {
-      console.log("Phase 0")
+      // console.log("Phase 0")
       clearInterval(this.phase0Timer);
 			clearInterval(this.slotTimer);
       clearInterval(this.slowReelTimer);
@@ -274,14 +274,14 @@ class App extends Component {
     } 
     // Loading Phase
     else if(phase === 1) {
-      console.log("Phase 1")
+      // console.log("Phase 1")
       this.slotTimer = setInterval(() => this.slotTick(), 100);
       const curTime = Math.round(Date.now() / 1000) // cur time in epoch
       this.checkContractTimer = setInterval(() => this.checkContractTick(curTime), 3500);
     } 
     // Update Result Phase
     else if(phase === 2) {
-      console.log("Phase 2")
+      // console.log("Phase 2")
       this.phase0Timer = setInterval((e) => {
 				clearInterval(this.phase0Timer);
 				this.setPhase(e, 0)
@@ -412,7 +412,7 @@ class App extends Component {
     this.setState({
       hash: currentHash,
     })
-    console.log("Creating Hash:", this.state.hash);
+    // console.log("Creating Hash:", this.state.hash);
     contract.methods.playerBet(slots).send({
       from: this.state.account,
       value: this.state.value
@@ -422,7 +422,7 @@ class App extends Component {
 				transError: true,
 			})
 			this.setPhase(null, 2)
-      console.log("Transaction failed.");
+      // console.log("Transaction failed.");
     })
     .on('sending', async () => {
       if(await hash(this.state.account, originalValues, slots) !== this.state.hash) {
@@ -430,12 +430,12 @@ class App extends Component {
           transError: true,
         })
         this.setPhase(null, 2)
-        console.log("Transaction failed. Something was changed illegally.");
+        // console.log("Transaction failed. Something was changed illegally.");
       }
     })
     .then(receipt => {
-      console.log("Transaction mined: Block is located at https://kovan.etherscan.io/tx/" + receipt.transactionHash)
-      console.log("Hash after transaction:", this.state.hash);
+      // console.log("Transaction mined: Block is located at https://kovan.etherscan.io/tx/" + receipt.transactionHash)
+      // console.log("Hash after transaction:", this.state.hash);
       this.setState({
         receipt: receipt,
       })
@@ -490,7 +490,7 @@ class App extends Component {
 				if(game[1].toUpperCase() === this.state.account.toUpperCase())
 					this.updateStats(game)
 			})
-			console.log("Finished processing past games")
+			// console.log("Finished processing past games")
 			callback()
 			this.setState({
 				backdrop: false,
