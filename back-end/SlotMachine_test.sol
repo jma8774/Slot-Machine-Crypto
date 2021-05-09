@@ -10,6 +10,8 @@ contract SlotMachineTest is SlotMachine {
     address acc0; // Casino
     address acc1; // Player 1
     address acc2; // Player 2
+    uint256[3][3] slots;
+    
 
     // Set up accounts to test beforehand
     function beforeAll () public returns (bool) {
@@ -40,7 +42,18 @@ contract SlotMachineTest is SlotMachine {
         Assert.equal(msg.value, 2, "Player 1 bet value should be 2 wei.");
         // Balance of the casino before spinning for Player 1.
         uint initial_balance = getCasinoBalance();
-        playerBet();
+        // Giving predefined slots for testing purposes
+        slots[0][0] = 7;
+        slots[0][1] = 4;
+        slots[0][2] = 2;
+        slots[1][0] = 2;
+        slots[1][1] = 2;
+        slots[1][2] = 5;
+        slots[2][0] = 1;
+        slots[2][1] = 2;
+        slots[2][2] = 3;
+        
+        playerBet(slots);
         
         // Check if balance is increased or decreased accordingly
         // Assuming Player 1 lost the game...
@@ -66,7 +79,17 @@ contract SlotMachineTest is SlotMachine {
         Assert.equal(msg.value, 3, "Player 1 bet value should be 3 wei.");
         // Balance of the casino before spinning for Player 2.
         uint initial_balance = getCasinoBalance();
-        playerBet();
+        // Giving predefined slots for testing purposes
+        slots[0][0] = 6;
+        slots[0][1] = 0;
+        slots[0][2] = 5;
+        slots[1][0] = 7;
+        slots[1][1] = 4;
+        slots[1][2] = 0;
+        slots[2][0] = 5;
+        slots[2][1] = 5;
+        slots[2][2] = 5;
+        playerBet(slots);
         
         // Check if balance is increased or decreased accordingly
         // Assuming Player 2 lost the game...
@@ -111,7 +134,17 @@ contract SlotMachineTest is SlotMachine {
         Assert.equal(msg.sender, acc1, "Player 1 account should be the sender of this function (2nd Play Test).");
         Assert.equal(msg.value, 1, "Player 1 bet value should be 1 wei. (2nd Play Test)");
         uint initial_balance = getCasinoBalance();
-        playerBet();
+        // Giving predefined slots for testing purposes
+        slots[0][0] = 7;
+        slots[0][1] = 3;
+        slots[0][2] = 2;
+        slots[1][0] = 3;
+        slots[1][1] = 3;
+        slots[1][2] = 3;
+        slots[2][0] = 5;
+        slots[2][1] = 7;
+        slots[2][2] = 6;
+        playerBet(slots);
         
         // Check if balance is increased or decreased accordingly
         // Assuming Player 1 lost the game...
@@ -136,7 +169,17 @@ contract SlotMachineTest is SlotMachine {
         Assert.equal(msg.sender, acc2, "Player 2 account should be the sender of this function (2nd Play Test).");
         Assert.equal(msg.value, 2, "Player 1 bet value should be 2 wei. (2nd Play Test)");
         uint initial_balance = getCasinoBalance();
-        playerBet();
+        // Giving predefined slots for testing purposes
+        slots[0][0] = 3;
+        slots[0][1] = 1;
+        slots[0][2] = 4;
+        slots[1][0] = 2;
+        slots[1][1] = 0;
+        slots[1][2] = 0;
+        slots[2][0] = 0;
+        slots[2][1] = 5;
+        slots[2][2] = 0;
+        playerBet(slots);
         
         // Check if balance is increased or decreased accordingly
         // Assuming Player 2 lost the game...

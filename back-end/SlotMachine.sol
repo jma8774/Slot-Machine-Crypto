@@ -12,7 +12,7 @@ contract SlotMachine {
     // 1 = refund
     // 2 = cherry
     // 3 = banana
-    // 4 = graph
+    // 4 = grape
     // 5 = orange
     // 6 = kiwi
     // 7 = jackpot
