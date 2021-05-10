@@ -188,12 +188,11 @@ function randNumGen() {
   return [splitArray(temp), arr];
 }
 
-// Take in player address, the original array before mod 8, and the slot matrix
-async function hash(player_address, randBytes, slotRandomNumbers) {
-  // const [randBytes, slotRandomNumbers] = randNumGen();
+// Take in player address, the original array before mod 8, and the slot matrix, and player's bet amount
+async function hash(player_address, randBytes, slotRandomNumbers, playerBet) {
   // Create the hash
   const hash = Crypto.createHash('sha256');
-  const hashResult = hash.update(randBytes).update(slotRandomNumbers).update(player_address).digest('hex');
+  const hashResult = hash.update(randBytes).update(slotRandomNumbers).update(player_address).update(playerBet).digest('hex');
   return hashResult;
 }
 
@@ -408,7 +407,7 @@ class App extends Component {
     const slots = arrayValues[0];
     // console.log(slots)
     const originalValues = arrayValues[1];
-    const currentHash = await hash(this.state.account, originalValues, slots);
+    const currentHash = await hash(this.state.account, originalValues, slots, this.state.value);
     this.setState({
       hash: currentHash,
     })
@@ -425,7 +424,7 @@ class App extends Component {
       // console.log("Transaction failed.");
     })
     .on('sending', async () => {
-      if(await hash(this.state.account, originalValues, slots) !== this.state.hash) {
+      if(await hash(this.state.account, originalValues, slots, this.state.value) !== this.state.hash) {
         this.setState({
           transError: true,
         })
