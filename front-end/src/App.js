@@ -327,7 +327,6 @@ class App extends Component {
     contract.methods.getFinishedGames().call()
     .then(res => {
       var gameResult = this.getLatestGame(res)
-      console.log(gameResult[3] >= curTime)
       if(gameResult && gameResult[3] >= curTime) {
         clearInterval(this.checkContractTimer)
         // console.log("Time:",gameResult[3],'>',curTime)
