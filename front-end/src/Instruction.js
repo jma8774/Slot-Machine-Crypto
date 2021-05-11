@@ -235,8 +235,8 @@ function Instruction({showInstr}) {
                         ['🥝🥝🥝', '200 Wei'],
                         ['7️⃣7️⃣7️⃣', '300 Wei'], 
                         ['🔁🔁🔁', 'Refund if no other winning combinations']
-                      ].map((val) => (
-                        <React.Fragment>
+                      ].map((val, i) => (
+                        <React.Fragment key={i}>
                           <Grid item xs={3} sm={3} md={3} lg={3}> 
                             <Typography>
                               {val[0]}
