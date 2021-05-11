@@ -222,6 +222,7 @@ class App extends Component {
 			page: 0,
       startDate: new Date(),
       hash: '',
+      curTime: 0,
     };
     this.showGame = this.showGame.bind(this);
     this.showInstruction = this.showInstruction.bind(this);
@@ -275,8 +276,7 @@ class App extends Component {
     else if(phase === 1) {
       // console.log("Phase 1")
       this.slotTimer = setInterval(() => this.slotTick(), 100);
-      const curTime = Math.round(Date.now() / 1000) // cur time in epoch
-      this.checkContractTimer = setInterval(() => this.checkContractTick(curTime), 3500);
+      this.checkContractTimer = setInterval(() => this.checkContractTick(this.state.curTime), 3500);
     } 
     // Update Result Phase
     else if(phase === 2) {
@@ -327,7 +327,8 @@ class App extends Component {
     contract.methods.getFinishedGames().call()
     .then(res => {
       var gameResult = this.getLatestGame(res)
-      if(gameResult && gameResult[3] > curTime) {
+      console.log(gameResult[3] >= curTime)
+      if(gameResult && gameResult[3] >= curTime) {
         clearInterval(this.checkContractTimer)
         // console.log("Time:",gameResult[3],'>',curTime)
         this.setState({
@@ -402,6 +403,7 @@ class App extends Component {
 			receipt: '',
 			transError: false,
 			gameResult: null,
+      curTime: Math.round(Date.now() / 1000) // cur time in epoch
 		})
     const arrayValues = randNumGen();
     const slots = arrayValues[0];
@@ -424,11 +426,11 @@ class App extends Component {
       // console.log("Transaction failed.");
     })
     .on('sending', async () => {
-      if(await hash(this.state.account, originalValues, slots, this.state.value) !== this.state.hash) {
-        this.setState({
-          transError: true,
-        })
-        this.setPhase(null, 2)
+        if(await hash(this.state.account, originalValues, slots, this.state.value) !== this.state.hash) {
+          this.setState({
+            transError: true,
+          })
+          this.setPhase(null, 2)
         // console.log("Transaction failed. Something was changed illegally.");
       }
     })
@@ -436,7 +438,7 @@ class App extends Component {
       // console.log("Transaction mined: Block is located at https://kovan.etherscan.io/tx/" + receipt.transactionHash)
       // console.log("Hash after transaction:", this.state.hash);
       this.setState({
-        receipt: receipt,
+        receipt: receipt, 
       })
     })
   }
